@@ -1,0 +1,22 @@
+
+
+.form-control {
+  width: 350px;
+}
+
+.card {
+  max-width: 400px;
+  margin: 0 auto;
+  margin-top: 5vh;
+  background-color: rgba(255, 255, 255, 0.9);
+}
+.error-message
+{
+
+  font-family: "Rubik", sans-serif;
+  font-style: italic;  
+  font-size: 17px;
+  color: red;
+  
+
+}

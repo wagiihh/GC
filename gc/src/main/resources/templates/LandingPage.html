@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/animations.css">  
+    <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/Landingpage.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+    <title>Canal Sugar</title>
+
+</head>
+<body>
+
+    <div class="full-height">
+        <center>
+        <table border="0">
+            <tr>
+                <td width="80%">
+                    <span class="edoc-logo">Canal Sugar. </span>
+                    <span class="edoc-logo-sub">| THE SUGAR BEET REVOLUTION PROJECT</span>
+                </td>
+                <td width="10%">
+                   <a th:href="@{/admin/Login}" class="non-style-link"><p class="nav-item">LOGIN</p></a>
+                </td>
+            </tr>
+            
+            <tr>
+                <td colspan="3">
+                    <p class="heading-text">Avoid Hassles & Delays.</p>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <p class="sub-text2">How is your sugar supply today? Looking to secure premium quality? <br>Don't worry. Explore our state-of-the-art sugar beet processing plant, the first of its kind in Egypt. <br>Discover more about our modern farming practices and make the most of our agronomic expertise.</p>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <center>
+                    <a th:href="@{/admin/Login}">
+                        <input type="button" value="GET STARTED" class="login-btn btn-primary btn" style="padding-left: 25px; padding-right: 25px; padding-top: 10px; padding-bottom: 10px;">
+                    </a>
+                    </center>
+                </td>
+            </tr>
+        </table>
+        
+    </center>
+    </div>
+</body>
+<footer>
+    <?php include_once "./includes/footer.php"; ?>
+</footer>
+</html>

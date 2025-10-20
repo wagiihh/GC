@@ -1,0 +1,49 @@
+body {
+    background-image: url('../images/CSHOME.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    font-family: 'Poppins', sans-serif;
+}
+
+table {
+    animation: transitionIn-Y-bottom 0.5s;
+}
+
+.edoc-logo {
+    font-size: 2em;
+    font-weight: 600;
+    color: #004327;
+}
+
+.edoc-logo-sub {
+    font-size: 1.2em;
+    font-weight: 300;
+}
+
+.nav-item {
+    font-size: 1em;
+    text-decoration: none;
+}
+
+.heading-text {
+    font-size: 2em;
+    font-weight: 600;
+}
+
+.sub-text2 {
+    font-size: 1.2em;
+    font-weight: 300;
+}
+
+.login-btn {
+    background-color: #004327;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+.login-btn:hover {
+    background-color: #59c282;
+}

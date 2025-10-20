@@ -1,0 +1,21 @@
+.container {
+    padding-left: 250px;
+}
+
+body {
+    background-color: white;
+    margin: 0;
+    padding: 0;
+
+}
+
+.error-message
+{
+
+font-family: "Rubik", sans-serif;
+font-style: italic;  
+font-size: 17px;
+color: red;
+
+
+}

@@ -1,0 +1,70 @@
+.view {
+    position: relative;
+   width:1170px;
+   margin: 20px;
+   left:310px; 
+   margin-left: 40px;
+   border: 2px solid black;
+   top: 50px;
+   }
+   
+   /* Styling for the h1 element */
+   h1#h1h1 {
+     font-size: 24px;
+     color: #ffffff;
+   }
+   
+   /* Styling for the table */
+   table.table {
+     width: 100%;
+     border-collapse: collapse;
+   }
+   
+   /* Styling for the table header */
+   table.table thead th {
+     background-color: #000000;
+     color: #ffffff;
+     padding: 10px;
+   }
+   
+   /* Styling for the table body */
+   table.table tbody td {
+     padding: 5px;
+   }
+   
+   /* Styling for the actions column */
+   table.table tbody td:last-child {
+     white-space: nowrap;
+   }
+   
+   /* Styling for the edit and delete links */
+   table.table tbody td a {
+     color: #ffffff;
+     text-decoration: none;
+     margin-right: 5px;
+   }
+   
+   /* Styling for the edit link */
+   table.table tbody td a#edit {
+     background-color: #0066cc;
+     padding: 5px 10px;
+   }
+   
+   /* Styling for the delete link */
+   table.table tbody td a#delete {
+     background-color: #cc0000;
+     padding: 5px 10px;
+   }
+   /* Styling for the table header */
+   table.table thead th {
+       background-color: #000000;
+       color: #ffffff;
+       padding: 10px;
+       text-align: center;  /* Center-align header text */
+   }
+   
+   /* Styling for the table body cells */
+   table.table tbody td {
+       padding: 5px;
+       text-align: center;  /* Center-align data cell text */
+   }

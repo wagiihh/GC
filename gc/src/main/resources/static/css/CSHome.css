@@ -1,0 +1,71 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #ffffff; /* White background */
+    color: #004327; /* Dark green text color */
+}
+
+.top-bar {
+    margin-left: 1800px;
+}
+
+.main--container {
+    margin-left: 270px; /* Adjust this to fit the sidebar width */
+    padding: 20px;
+    background-color: #ffffff;
+}
+
+h3 {
+    color: #004327; /* Dark green for headings */
+}
+
+table {
+    width: 80%;
+    margin: 0 auto;
+    border-collapse: collapse;
+    text-align: center;
+    margin-right: 300px;
+}
+
+th, td {
+    padding: 15px;
+}
+
+th {
+    background-color: #59c282; /* Light green for table header */
+    color: white; /* White text in table headers */
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.target-vs-sales--container {
+    background-size:auto;
+    background-position: center;
+    padding: 20px;
+    width: 95%;
+    height: 450px;
+    background-color: #59c282; /* Light green background */
+    background-image: url('../images/CSHOME.jpg');
+
+}
+
+.section--title h3 {
+    color: #004327; /* Dark green for section titles */
+}
+
+.sidebar {
+    margin-right: 100px;
+    padding-right: 100px;
+}
+
+.sales--value h3 {
+    color: #004327;
+}

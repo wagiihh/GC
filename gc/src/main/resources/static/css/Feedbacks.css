@@ -1,0 +1,74 @@
+/* style.css */
+
+/* Resetting default browser styles */
+body, h2, table {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Basic styling */
+body {
+    padding: 20px;
+    background-color: #f7f7f7;
+}
+
+h2 {
+    margin-bottom: 20px;
+    color: #333;
+    background-color: #f7f7f7;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+thead {
+    background-color: #f2f2f2;
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: center;
+}
+
+th {
+    background-color: #333;
+    color: #fff;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Hover effect */
+tbody tr:hover {
+    background-color: #e0e0e0;
+}
+
+/* Button styling */
+button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+button.dd {
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+button.dd:hover {
+    background-color: #c0392b;
+}
+
+button.dd:active {
+    background-color: #a93226;
+}

@@ -1,0 +1,72 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: url('../images/white.jpg');
+}
+
+.topBar {
+    width: calc(100% - 220px); /* Width of the viewport minus sidebar width */
+    height: 50px;
+    background-color: #ffffff; /* White background */
+    color: #333;
+    position: fixed;
+    top: 0;
+    left: 220px; /* Sidebar width */
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+
+
+.sidebar a {
+    color: #ffffff;
+    padding: 15px;
+    text-decoration: none;
+    display: block;
+}
+
+.sidebar a:hover {
+    background-color: #005d00; /* Slightly lighter dark green for hover effect */
+}
+
+.container {
+    margin-left: 250px; /* Align with the sidebar */
+    padding-top: 60px; /* Space for the top bar */
+    padding: 20px;
+}
+
+.card {
+    border-radius: 8px;
+    border: 1px solid #d0d0d0;
+}
+
+.card-body {
+    background-color: #ffffff; /* White background for card */
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.form-control {
+    border-radius: 4px;
+    border: 1px solid #d0d0d0;
+}
+
+.form-control:focus {
+    border-color: #004d00; /* Dark green border on focus */
+    box-shadow: 0 0 0 0.2rem rgba(0, 77, 0, 0.25); /* Light green shadow */
+}
+
+.btn-primary {
+    background-color: #004d00; /* Dark green */
+    border-color: #004d00;
+}
+
+.btn-primary:hover {
+    background-color: #005d00; /* Slightly lighter dark green on hover */
+    border-color: #005d00;
+}
+
+.error-message {
+    color: #ff0000; /* Red for error messages */
+}
