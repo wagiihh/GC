@@ -16,9 +16,12 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "name")
-    @NotBlank(message = "Name is required")
-    private String name;
+    @Column(name = "Firstname")
+    @NotBlank(message = "Firstname is required")
+    private String Firstname;
+    @Column(name = "Lastname")
+    @NotBlank(message = "Lastname is required")
+    private String Lastname;
     @Column(name = "email")
     @NotBlank(message = "Email is required")
     @Email(message = "Invalid email address")
@@ -30,11 +33,72 @@ public class User {
     @Column(name = "role")
     @NotBlank(message = "Role is required")
     private String role;
-    // @Column(name = "status")
-    // @NotBlank(message = "Status is required")
-    // private String status;
-    // @Column(name = "token")
-    // @NotBlank(message = "Token is required")
-    // private String token;
+    
+
+    public User(String email,String Fristname,String Lastname,String role)
+    {
+        this.email=email;
+        this.Firstname=Firstname;
+        this.Lastname=Lastname;
+        this.role=role;
+    }
+
+    public User(){}
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getFirstname() {
+        return Firstname;
+    }
+
+
+    public void setFirstname(String firstname) {
+        Firstname = firstname;
+    }
+
+
+    public String getLastname() {
+        return Lastname;
+    }
+
+
+    public void setLastname(String lastname) {
+        Lastname = lastname;
+    }
+
+
+    public String getEmail() {
+        return email;
+    }
+
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+
+    public String getRole() {
+        return role;
+    }
+
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+
+    public String getPassword() {
+        return password;
+    }
+
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+   
 
 }
