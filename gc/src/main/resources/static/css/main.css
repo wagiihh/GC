@@ -1,9 +1,9 @@
 @import url('font-inter.css');
 :root {
-  --primarycolor: #0A76D8;
-  --primarycolorhover: #006dd3;
-  --btnice:#D8EBFA;
-  --btnnicetext:#1b62b3;
+  --primarycolor: #C0A97A;
+  --primarycolorhover: #F8F8F8;
+  --btnice:#9E9E9E;
+  --btnnicetext:#000000;
 }
 
 body{
@@ -11,7 +11,8 @@ body{
     padding: 0;
     border-spacing: 0;
     font-family: 'Inter', sans-serif;
-    
+    background-color: #222222;
+    color: #F8F8F8;
 }
 
 *, ::after, ::before{
@@ -48,25 +49,25 @@ body{
 .btn-primary{
     background-color: var(--primarycolor) ;
     border: 1px solid var(--primarycolor) ;
-    color: #fff ;
-    box-shadow: 0 3px 5px 0 rgba(57,108,240,0.3);
+    color: #000000 ;
+    box-shadow: 0 3px 5px 0 rgba(192,169,122,0.3);
 }
 
 .btn-primary-soft{
-    background-color: #D8EBFA ;
-    /*border: 1px solid rgba(57,108,240,0.1) ;*/    color: #1969AA;
+    background-color: #9E9E9E ;
+    /*border: 1px solid rgba(192,169,122,0.1) ;*/    color: #000000;
     font-weight: 500;
     font-size: 16px;
     border: none;
-    /*box-shadow: 0 3px 5px 0 rgba(57,108,240,0.3)*/
+    /*box-shadow: 0 3px 5px 0 rgba(192,169,122,0.3)*/
 }
 
 
 .btn-primary-soft:hover{
     background-color: var(--primarycolor) ;
-    /*border: 1px solid rgba(57,108,240,0.1) ;*/
-    color: #fff ;
-    box-shadow: 0 3px 5px 0 rgba(57,108,240,0.3);
+    /*border: 1px solid rgba(192,169,122,0.1) ;*/
+    color: #000000 ;
+    box-shadow: 0 3px 5px 0 rgba(192,169,122,0.3);
 }
 
 
@@ -77,7 +78,7 @@ body{
 
 .non-style-link:link, .non-style-link:visited, .non-style-link:hover, .non-style-link:active{
     text-decoration: none;
-    color: rgb(43, 43, 43);
+    color: #F8F8F8;
 }
 
 
@@ -92,9 +93,10 @@ body{
     letter-spacing: 0.5px;
     transition: all 0.3s;
     border-radius: 5px;
-    background-color: #f0f0f073;
-    border: 1px solid rgba(57,108,240,0.1) ;
+    background-color: #9E9E9E;
+    border: 1px solid rgba(192,169,122,0.1) ;
     font-family: 'Inter', sans-serif;
+    color: #000000;
 }
 
 

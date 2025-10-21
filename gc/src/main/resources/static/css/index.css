@@ -1,9 +1,8 @@
 body{
-    background-image: url(../img/bg01.jpg);
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-size: cover;
+    background-color: #222222;
     height: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 html, body {
@@ -12,12 +11,9 @@ html, body {
   }
   
 .full-height {
-    background: rgba(26, 26, 26, 0.548);
-    background-attachment: fixed;
     max-height: 100vh;
     height: 100vh;
-
-
+    position: relative;
 }
 table{
     width: 100%;
@@ -25,7 +21,7 @@ table{
     
 }
 .heading-text{
-    color: white;
+    color: #F8F8F8;
     font-size: 42px;
     font-weight: 700;
     line-height: 63px;
@@ -35,7 +31,7 @@ table{
 }
 
 .sub-text2{
-    color: rgba(255, 255, 255, 0.5);
+    color: #9E9E9E;
     font-size: 17px;
     line-height: 27px;
     font-weight: 400;
@@ -45,13 +41,13 @@ table{
 
 
 .register-btn{
-    background-color: rgba(240, 248, 255, 0.589);
-    color: #345cc4;
+    background-color: #C0A97A;
+    color: #000000;
 }
 
 
 .edoc-logo{
-    color: white;
+    color: #F8F8F8;
     font-weight: bolder;
     font-size: 20px;
     padding-left: 20px;
@@ -59,14 +55,14 @@ table{
 }
 
 .edoc-logo-sub{
-    color: rgba(255, 255, 255, 0.733);
+    color: #9E9E9E;
     font-size: 12px;
 
 }
 
 
 .nav-item{
-    color: rgba(255, 255, 255, 0.671);
+    color: #9E9E9E;
     text-align: center;
     font-size: 15px;
     font-weight: 500;
@@ -74,7 +70,7 @@ table{
 }
 
 .nav-item:hover{
-    color: #f0f0f0;
+    color: #F8F8F8;
 
 }
 

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ghoneim Captures - Contact</title>
+  <meta name="description"
+    content="Contact Ghoneim Captures - Crafting timeless visuals in every frame. Professional photography services for your special moments.">
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="./assets/favicon.ico" />
+  <link rel="stylesheet" href="../css/animations.css">  
+  <link rel="stylesheet" href="../css/index.css">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/contact.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <!-- Alpine.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <!-- Start - Fonts -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Signika:wght@400;700&display=swap" rel="stylesheet">
+  <!-- End - Fonts -->
+</head>
+
+<body class="animate-fade-in">
+  <!-- Header -->
+  <header>
+    <nav id="nav" x-data="{ open: false }" role="navigation">
+      <div class="container">
+        <div class="logo-section">
+          <a th:href="@{/landing/}" class="logo-link">
+            <img src="../images/Enclosed Horizontal Logo White.png" alt="Ghoneim Captures">
+          </a>
+        </div>
+        <div class="nav-menu">
+          <ul class="nav-links">
+            <li><a th:href="@{/landing/projects}">PROJECTS</a></li>
+            <li><a th:href="@{/landing/contact}">CONTACT US</a></li>
+            <li><a th:href="@{/landing/about}">ABOUT</a></li>
+          </ul>
+        </div>
+        <button class="mobile-menu-btn" onclick="menuToggle()" @click="open = !open">
+          <span class="sr-only">Open main menu</span>
+          <div class="hamburger">
+            <span aria-hidden="true" class="line" :class="{'rotate-45': open,' -translate-y-1.5': !open }"></span>
+            <span aria-hidden="true" class="line" :class="{'opacity-0': open }"></span>
+            <span aria-hidden="true" class="line" :class="{'-rotate-45': open, ' translate-y-1.5': !open}"></span>
+          </div>
+        </button>
+      </div>
+    </nav>
+  </header>
+  <!-- Main Content -->
+  <main>
+    <div class="container">
+      <div class="content-grid">
+        <section class="contact-section">
+          <h1>CONTACT</h1>
+          <form class="contact-form" action="mailto:info@ghoneimcaptures.com">
+            <div class="form-group">
+              <label for="email">Your Email</label>
+              <input type="email" id="email" placeholder="your.email@example.com" required />
+            </div>
+            <div class="form-group">
+              <label for="subject">Subject</label>
+              <input type="text" id="subject" placeholder="How can we help you?" required />
+            </div>
+            <div class="form-group">
+              <label for="message">Your Message</label>
+              <textarea id="message" rows="6" placeholder="Tell us about your photography needs..." required></textarea>
+            </div>
+            <button type="submit" class="submit-btn">Send Message</button>
+          </form>
+        </section>
+        <div class="image-section">
+          <div class="image-container">
+            <img src="https://images.unsplash.com/reserve/yZfr4jmxQyuaE132MWZm_stagnes.jpg?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2052&q=80" alt="Professional Photography" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="fade_in.js"></script>
+  <script src="menu.js"></script>
+</body>
+
+</html>

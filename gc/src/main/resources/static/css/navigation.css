@@ -15,19 +15,19 @@
   }
 
   .header-links li.active span::before {
-    background-color: #3bc59a;
+    background-color: #C0A97A;
   }
 .active{
-  background-color: #3bc59a;
+  background-color: #C0A97A;
 
 }
   .header-links li:not(.active):hover span::before {
-    background-color: #ccc;
+    background-color: #9E9E9E;
   }
   .logo {
   /* Add your logo styles here */
   font-size: 24px; /* Example font size */
   font-weight: bold; /* Example font weight */
-  color: #333; /* Example color */
+  color: #F8F8F8; /* Example color */
   /* Add any other styling you want for your logo */
 }

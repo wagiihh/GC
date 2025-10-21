@@ -11,21 +11,37 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
-    <title>Canal Sugar</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Ghoneim Captures</title>
 
 </head>
 <body>
+
+    <!-- Video Background -->
+    <video autoplay muted loop playsinline preload="auto" class="video-background">
+        <source src="../videos/loopVid.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Video Overlay -->
+    <div class="video-overlay"></div>
 
     <div class="full-height">
         <center>
         <table border="0">
             <tr>
                 <td width="80%">
-                    <span class="edoc-logo">Canal Sugar. </span>
-                    <span class="edoc-logo-sub">| THE SUGAR BEET REVOLUTION PROJECT</span>
+                    <div class="logo-container">
+                        <img src="../images/Enclosed Horizontal Logo White.png" alt="Ghoneim Captures" class="company-logo">
+                        <span class="edoc-logo-sub">| Crafting timeless visuals in every frame.</span>
+                    </div>
                 </td>
-                <td width="10%">
-                   <a th:href="@{/admin/Login}" class="non-style-link"><p class="nav-item">LOGIN</p></a>
+                <td width="20%">
+                    <nav class="main-navigation">
+                        <a th:href="@{/landing/projects}" class="nav-link">PROJECTS</a>
+                        <a th:href="@{/landing/contact}" class="nav-link">CONTACT US</a>
+                        <a th:href="@{/landing/about}" class="nav-link">ABOUT</a>
+                    </nav>
                 </td>
             </tr>
             
@@ -43,7 +59,7 @@
                 <td colspan="3">
                     <center>
                     <a th:href="@{/admin/Login}">
-                        <input type="button" value="GET STARTED" class="login-btn btn-primary btn" style="padding-left: 25px; padding-right: 25px; padding-top: 10px; padding-bottom: 10px;">
+                        <input type="button" value="EXPLORE PROJECTS" class="login-btn btn-primary btn" style="padding-left: 25px; padding-right: 25px; padding-top: 10px; padding-bottom: 10px;">
                     </a>
                     </center>
                 </td>
@@ -52,8 +68,44 @@
         
     </center>
     </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <img src="../images/Enclosed Horizontal Logo White.png" alt="Ghoneim Captures" class="footer-logo">
+                <p>Crafting timeless visuals in every frame.</p>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Contact Info</h4>
+                <p><i class="fa fa-envelope"></i> info@ghoneimcaptures.com</p>
+                <p><i class="fa fa-phone"></i> +20 123 456 7890</p>
+                <p><i class="fa fa-map-marker"></i> Egypt</p>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Follow Us</h4>
+                <div class="social-links">
+                    <a href="https://facebook.com/ghoneimcaptures" target="_blank" class="social-link">
+                        <i class="fa fa-facebook"></i>
+                        <span>Facebook</span>
+                    </a>
+                    <a href="https://instagram.com/ghoneimcaptures" target="_blank" class="social-link">
+                        <i class="fa fa-instagram"></i>
+                        <span>Instagram</span>
+                    </a>
+                    <a href="https://linkedin.com/company/ghoneimcaptures" target="_blank" class="social-link">
+                        <i class="fa fa-linkedin"></i>
+                        <span>LinkedIn</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 Ghoneim Captures. All rights reserved.</p>
+        </div>
+    </footer>
 </body>
-<footer>
-    <?php include_once "./includes/footer.php"; ?>
-</footer>
 </html>
