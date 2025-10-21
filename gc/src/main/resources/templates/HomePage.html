@@ -68,22 +68,25 @@
 
         .admin-nav-links {
             display: flex;
-            gap: 30px;
+            gap: 20px;
             list-style: none;
             margin: 0;
             padding: 0;
+            flex-wrap: nowrap;
+            align-items: center;
         }
 
         .admin-nav-links a {
             color: #F8F8F8;
             text-decoration: none;
             font-weight: 500;
-            padding: 12px 20px;
+            padding: 10px 15px;
             border-radius: 8px;
             transition: all 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            white-space: nowrap;
         }
 
         .admin-nav-links a:hover {
@@ -269,6 +272,17 @@
         }
 
         /* Responsive Design */
+        @media (max-width: 1200px) {
+            .admin-nav-links {
+                gap: 15px;
+            }
+
+            .admin-nav-links a {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+            }
+        }
+
         @media (max-width: 768px) {
             .admin-nav {
                 flex-direction: column;
@@ -277,14 +291,17 @@
             }
 
             .admin-nav-links {
-                flex-wrap: wrap;
+                flex-wrap: nowrap;
                 justify-content: center;
-                gap: 15px;
+                gap: 10px;
+                overflow-x: auto;
+                padding: 10px 0;
             }
 
             .admin-nav-links a {
-                padding: 10px 15px;
-                font-size: 0.8rem;
+                padding: 8px 10px;
+                font-size: 0.75rem;
+                flex-shrink: 0;
             }
 
             .dashboard-grid {
@@ -337,9 +354,9 @@
             </div>
             
             <ul class="admin-nav-links">
-                <li><a th:href="@{/admin/addUsers}"><i class="fas fa-user-plus"></i> Add Users</a></li>
-                <li><a th:href="@{/admin/addShoots}"><i class="fas fa-camera"></i> Add Shoots</a></li>
-                <li><a th:href="@{/admin/addCategories}"><i class="fas fa-folder-plus"></i> Add Categories</a></li>
+                <li><a th:href="@{/GC/manageusers}"><i class="fas fa-users-cog"></i> Manage Users</a></li>
+                <li><a th:href="@{/GC/managecategories}"><i class="fas fa-folder-open"></i> Manage Categories</a></li>
+                <li><a th:href="@{/admin/addShoots}"><i class="fas fa-camera"></i> Manage Shoots</a></li>
                 <li><a th:href="@{/landing/}"><i class="fas fa-home"></i> Website</a></li>
                 <li><a th:href="@{/GC/logout}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>

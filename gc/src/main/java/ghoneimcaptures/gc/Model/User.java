@@ -16,12 +16,12 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "Firstname")
+    @Column(name = "firstname")
     @NotBlank(message = "Firstname is required")
-    private String Firstname;
-    @Column(name = "Lastname")
+    private String firstname;
+    @Column(name = "lastname")
     @NotBlank(message = "Lastname is required")
-    private String Lastname;
+    private String lastname;
     @Column(name = "email")
     @NotBlank(message = "Email is required")
     @Email(message = "Invalid email address")
@@ -35,11 +35,11 @@ public class User {
     private String role;
     
 
-    public User(String email,String Fristname,String Lastname,String role)
+    public User(String email,String firstname,String lastname,String role)
     {
         this.email=email;
-        this.Firstname=Firstname;
-        this.Lastname=Lastname;
+        this.firstname=firstname;
+        this.lastname=lastname;
         this.role=role;
     }
 
@@ -51,22 +51,22 @@ public class User {
     }
 
     public String getFirstname() {
-        return Firstname;
+        return firstname;
     }
 
 
     public void setFirstname(String firstname) {
-        Firstname = firstname;
+        this.firstname = firstname;
     }
 
 
     public String getLastname() {
-        return Lastname;
+        return lastname;
     }
 
 
     public void setLastname(String lastname) {
-        Lastname = lastname;
+        this.lastname = lastname;
     }
 
 
@@ -97,6 +97,10 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public User getUser() {
+        return this;
     }
 
    
