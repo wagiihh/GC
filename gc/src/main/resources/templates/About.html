@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghoneim Captures - About Us</title>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="../css/contact.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* About Page Specific Styles */
+        body {
+            background: #ffffff;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            color: #333333;
+        }
+
+        /* Header */
+        .header {
+            background: #f8f9fa;
+            padding: 20px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 50px;
+            width: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover img {
+            transform: scale(1.05);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #000;
+            text-decoration: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            font-family: 'Poppins', sans-serif;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #c0a97a;
+        }
+
+        .contact-info {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .phone {
+            color: #000;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .contact-btn {
+            background: #c0a97a;
+            color: #000;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            transition: background 0.3s ease;
+        }
+
+        .contact-btn:hover {
+            background: #a68b5b;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            position: relative;
+            height: 80vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), 
+                        url('../images/about.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 700;
+            margin: 0 0 20px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 0;
+            background: #f8f9fa;
+        }
+
+        .content-section {
+            padding: 60px 0;
+            margin-bottom: 0;
+        }
+
+        .content-section:nth-child(1) {
+            background: #f8f9fa !important;
+        }
+
+        .content-section:nth-child(2) {
+            background: #ffffff !important;
+        }
+
+        .content-section:nth-child(3) {
+            background: #f8f9fa !important;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin: 0 0 30px 0;
+            color: #000;
+        }
+
+        .content-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            text-align: justify !important;
+            max-width: 700px;
+            margin: 0 auto;
+            color: #555;
+            text-justify: inter-word;
+        }
+
+        .highlight {
+            color: #c0a97a;
+            font-weight: 600;
+        }
+
+        /* Vision and Mission Section */
+        .vision-mission-section {
+            background: #f8f9fa;
+            padding: 80px 0;
+        }
+
+        .vision-mission-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: start;
+        }
+
+        .vision-box, .mission-box {
+            background: #ffffff;
+            padding: 50px 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .vision-title, .mission-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 0 0 25px 0;
+            color: #000;
+        }
+
+        .vision-text, .mission-text {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #555;
+            margin: 0;
+            text-align: justify;
+        }
+
+        /* Video Section */
+        .video-section {
+            padding: 80px 0;
+            background: #000;
+        }
+
+        .video-container {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .video-share {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #000;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.8rem;
+            transition: background 0.3s ease;
+        }
+
+        .video-share:hover {
+            background: #fff;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            background: #c0a97a;
+            color: #000;
+            padding: 60px 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 20px;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Footer */
+        .footer {
+            background: #000;
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #c0a97a;
+        }
+
+        .footer-text {
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .logo img {
+                height: 40px;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 20px;
+            }
+
+            .contact-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .content-section {
+                padding: 40px 0;
+            }
+
+            .content-text {
+                text-align: left;
+                font-size: 1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .content-text {
+                font-size: 1rem;
+            }
+
+            .hero-section {
+                background-attachment: scroll;
+            }
+
+            .mission-title {
+                font-size: 2rem;
+            }
+
+            .mission-text {
+                font-size: 1.1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+
+            .vision-mission-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .vision-box, .mission-box {
+                padding: 40px 30px;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <a href="/" class="logo">
+                <img src="../images/Enclosed Horizontal Logo Black.png" alt="Ghoneim Captures" style="height: 40px; width: auto;">
+            </a>
+            
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#photo-shoots">PHOTO SHOOTS</a></li>
+                    <li><a href="#about">ABOUT</a></li>
+                    <li><a href="#workshops">CONTACT US</a></li>
+                </ul>
+            </nav>
+            
+         
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">ABOUT</h1>
+            <p class="hero-subtitle">Discover Our Story</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Mission Statement -->
+            <section class="content-section">
+                <h2 class="section-title">Our Mission</h2>
+                <p class="content-text">
+                    We believe that high-end <span class="highlight">fashion photography</span> shouldn't be exclusive to high-end <span class="highlight">fashion models</span>.
+                </p>
+            </section>
+
+            <!-- About Text -->
+            <section class="content-section">
+                <p class="content-text">
+                    Founded in 2007 by renowned advertising photographer North Sullivan, TPS blurs the line between editorial fashion photography and personal portraiture. Located in three retro warehouses in Sydney, Melbourne, and Brisbane, our studio's offer people the chance to step out of their comfort zones and spend a day playing adult dress-ups with the professionals.
+                </p>
+            </section>
+
+            <!-- Mission Statement -->
+            <section class="content-section">
+                <p class="content-text">
+                    Ultimately our mission is to help people to see beauty in themselves while creating wonderful works of art that will be passed down through generations.
+                </p>
+            </section>
+        </div>
+    </main>
+
+    <!-- Vision and Mission Section -->
+    <section class="vision-mission-section">
+        <div class="container">
+            <div class="vision-mission-grid">
+                <!-- Vision Box -->
+                <div class="vision-box">
+                    <h2 class="vision-title">Our Vision</h2>
+                    <p class="vision-text">
+                        To democratize high-end photography and make it accessible to everyone, regardless of their background or experience level.
+                    </p>
+                </div>
+                
+                <!-- Mission Box -->
+                <div class="mission-box">
+                    <h2 class="mission-title">Our Mission</h2>
+                    <p class="mission-text">
+                        We believe that high-end fashion photography shouldn't be exclusive to high-end fashion models. Our mission is to help people see beauty in themselves while creating wonderful works of art that will be passed down through generations.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+   
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <nav class="footer-links">
+                <a href="#photo-shoots">PHOTO SHOOTS</a>
+                <a href="#galleries">GALLERIES</a>
+                <a href="#about">ABOUT</a>
+                <a href="#resources">RESOURCES</a>
+                <a href="#workshops">WORKSHOPS</a>
+                <a href="#win">WIN</a>
+                <a href="#book">BOOK NOW</a>
+            </nav>
+            <p class="footer-text">
+                © 2024 Ghoneim Captures. All rights reserved. | Phone: 1300 288 818
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add scroll effect to header
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(248, 249, 250, 0.95)';
+                header.style.backdropFilter = 'blur(10px)';
+            } else {
+                header.style.background = '#f8f9fa';
+                header.style.backdropFilter = 'none';
+            }
+        });
+
+        // Animate stats on scroll
+        const observerOptions = {
+            threshold: 0.5,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const statNumbers = entry.target.querySelectorAll('.stat-number');
+                    statNumbers.forEach(stat => {
+                        const finalNumber = stat.textContent;
+                        const numericValue = parseInt(finalNumber.replace(/[^\d]/g, ''));
+                        if (numericValue) {
+                            animateNumber(stat, 0, numericValue, 2000);
+                        }
+                    });
+                }
+            });
+        }, observerOptions);
+
+        const statsSection = document.querySelector('.stats-section');
+        if (statsSection) {
+            observer.observe(statsSection);
+        }
+
+        function animateNumber(element, start, end, duration) {
+            const startTime = performance.now();
+            const suffix = element.textContent.replace(/[\d]/g, '');
+            
+            function updateNumber(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const current = Math.floor(start + (end - start) * progress);
+                element.textContent = current + suffix;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateNumber);
+                }
+            }
+            
+            requestAnimationFrame(updateNumber);
+        }
+    </script>
+</body>
+</html>
