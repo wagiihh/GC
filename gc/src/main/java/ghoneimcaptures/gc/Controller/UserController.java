@@ -42,13 +42,13 @@ public class UserController {
                 return new RedirectView("/GC/HomePage");
             }
             else {
-                return new RedirectView("/GC/Login?error=incorrectPassword" + email);
+                return new RedirectView("/GC/Login?error=InCorrect Password" );
             }
            
         
         }
         
-        return new RedirectView("/GC/Login?error=userNotFound" + email);
+        return new RedirectView("/GC/Login?error=USER NOT FOUND" );
     }
 
     

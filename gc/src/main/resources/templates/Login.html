@@ -465,17 +465,25 @@
 
         // Check for error messages on page load
         document.addEventListener('DOMContentLoaded', function() {
+            // Always clear any existing error messages first
+            clearErrorMessage();
+            
+            // Check if there's an error parameter in URL (from failed login attempt)
             const errorMessage = getParameterByName('error');
             if (errorMessage) {
+                // Show error message for failed login attempts
                 showErrorMessage(errorMessage);
+                
+                // Auto-hide error message after 3 seconds
+                setTimeout(() => {
+                    clearErrorMessage();
+                }, 10000);
             }
-
-            // Reset button state if there's an error
+            
+            // Reset button state
             const loginBtn = document.getElementById("login-btn");
-            if (errorMessage) {
-                loginBtn.classList.remove('loading');
-                loginBtn.textContent = 'Sign In';
-            }
+            loginBtn.classList.remove('loading');
+            loginBtn.textContent = 'Sign In';
         });
 
         // Add focus effects
