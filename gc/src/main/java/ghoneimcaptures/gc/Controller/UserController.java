@@ -38,7 +38,23 @@ public class UserController {
         User userAcc=this.userRepository.findByEmail(email);
         if(userAcc!=null)
         {
-            Boolean passwordsMatch=BCrypt.checkpw(pass,userAcc.getPassword());
+            boolean passwordsMatch = false;
+            
+            try {
+                // Try BCrypt first (for hashed passwords)
+                passwordsMatch = BCrypt.checkpw(pass, userAcc.getPassword());
+            } catch (IllegalArgumentException e) {
+                // If BCrypt fails, check if it's a plain text password
+                if (userAcc.getPassword().equals(pass)) {
+                    passwordsMatch = true;
+                    // Hash the password and update it in the database
+                    String hashedPassword = BCrypt.hashpw(pass, BCrypt.gensalt());
+                    userAcc.setPassword(hashedPassword);
+                    userRepository.save(userAcc);
+                    System.out.println("Password hashed and updated for user: " + userAcc.getEmail());
+                }
+            }
+            
             if(passwordsMatch)
             {
                 session.setAttribute("email", userAcc.getEmail());
@@ -49,8 +65,6 @@ public class UserController {
             else {
                 return new RedirectView("/GC/Login?error=InCorrect Password" );
             }
-           
-        
         }
         
         return new RedirectView("/GC/Login?error=USER NOT FOUND" );
