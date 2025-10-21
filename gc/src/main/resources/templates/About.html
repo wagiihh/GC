@@ -204,7 +204,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 60px;
-            align-items: start;
+            align-items: stretch;
         }
 
         .vision-box, .mission-box {
@@ -213,6 +213,10 @@
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 300px;
         }
 
         .vision-title, .mission-title {
@@ -227,7 +231,9 @@
             line-height: 1.7;
             color: #555;
             margin: 0;
-            text-align: justify;
+            text-align: justify !important;
+            text-justify: inter-word;
+            flex-grow: 1;
         }
 
         /* Video Section */
@@ -460,15 +466,15 @@
     <!-- Header -->
     <header class="header">
         <div class="header-container">
-            <a href="/" class="logo">
+            <a th:href="@{/landing/}" class="logo">
                 <img src="../images/Enclosed Horizontal Logo Black.png" alt="Ghoneim Captures" style="height: 40px; width: auto;">
             </a>
             
             <nav>
                 <ul class="nav-links">
                     <li><a href="#photo-shoots">PHOTO SHOOTS</a></li>
-                    <li><a href="#about">ABOUT</a></li>
-                    <li><a href="#workshops">CONTACT US</a></li>
+                    <a th:href="@{/landing/about}" class="nav-link">ABOUT</a>
+                    <a th:href="@{/landing/contact}" class="nav-link">CONTACT US</a>
                 </ul>
             </nav>
             
@@ -484,32 +490,6 @@
         </div>
     </section>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <div class="container">
-            <!-- Mission Statement -->
-            <section class="content-section">
-                <h2 class="section-title">Our Mission</h2>
-                <p class="content-text">
-                    We believe that high-end <span class="highlight">fashion photography</span> shouldn't be exclusive to high-end <span class="highlight">fashion models</span>.
-                </p>
-            </section>
-
-            <!-- About Text -->
-            <section class="content-section">
-                <p class="content-text">
-                    Founded in 2007 by renowned advertising photographer North Sullivan, TPS blurs the line between editorial fashion photography and personal portraiture. Located in three retro warehouses in Sydney, Melbourne, and Brisbane, our studio's offer people the chance to step out of their comfort zones and spend a day playing adult dress-ups with the professionals.
-                </p>
-            </section>
-
-            <!-- Mission Statement -->
-            <section class="content-section">
-                <p class="content-text">
-                    Ultimately our mission is to help people to see beauty in themselves while creating wonderful works of art that will be passed down through generations.
-                </p>
-            </section>
-        </div>
-    </main>
 
     <!-- Vision and Mission Section -->
     <section class="vision-mission-section">
