@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects - Ghoneim Captures</title>
+    <link rel="icon" type="image/png" href="../images/Enclosed Vertical Logo Black.png">
+    <link rel="stylesheet" href="/css/Projects.css">
+    <link rel="stylesheet" href="/css/chat.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <a th:href="@{/landing/}" class="logo">
+                <img src="../images/Enclosed Horizontal Logo Black.png" alt="Ghoneim Captures" style="height: 40px; width: auto;">
+            </a>
+            
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#photo-shoots">PHOTO SHOOTS</a></li>
+                    <a th:href="@{/landing/about}" class="nav-link">ABOUT</a>
+                    <a th:href="@{/landing/contact}" class="nav-link">CONTACT US</a>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-background">
+                <!-- Background image will be added via CSS -->
+            </div>
+            <div class="hero-content">
+                <h1 class="hero-title">OUR CATEGORIES</h1>
+                <p class="hero-subtitle">Explore diverse photography styles.</p>
+            </div>
+              
+            <div class="scroll-indicator">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 5V19M12 19L19 12M12 19L5 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+        </section>
+
+        <!-- Dynamic Categories with Alternating Layout -->
+        <section class="categories-section" th:if="${categories != null and !categories.empty}">
+            <div class="container">
+                <div th:each="category, iterStat : ${categories}" class="category-item" th:classappend="${iterStat.odd} ? 'reverse' : ''">
+                    <div class="content-grid">
+                        <!-- Image Section -->
+                        <div class="image-section">
+                            <a th:href="@{/landing/projects/{id}(id=${category.id})}" class="category-image">
+                                <div class="image-container">
+                                    <div th:if="${category.image != null}" class="dynamic-image">
+                                        <img th:src="${category.image.url}" th:alt="${category.name}" />
+                                    </div>
+                                    <div th:unless="${category.image != null}" class="placeholder-image">
+                                        <i class="fas fa-camera"></i>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        
+                        <!-- Text Section -->
+                        <div class="text-section">
+                            <h1 class="main-title" th:text="${category.name} + ': Featured Collection'">Category Name</h1>
+                            <div class="tag" th:text="${category.name}">Category Tag</div>
+                            <a th:href="@{/landing/projects/{id}(id=${category.id})}" class="shop-now">
+                                <span class="arrow">→</span>
+                                <span>VIEW SHOOTS</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bottom Preview Window -->
+
+    </main>
+
+    <!-- AI Chat Assistant -->
+    <div id="chatAssistant" class="chat-assistant">
+        <div class="chat-toggle" onclick="toggleChat()">
+            <i class="fas fa-robot"></i>
+            <span class="chat-label">AI Assistant</span>
+        </div>
+        
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <div class="chat-title">
+                    <i class="fas fa-robot"></i>
+                    <span>Shoot Ideas Assistant</span>
+                </div>
+                <button class="chat-close" onclick="toggleChat()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <div class="message assistant-message">
+                    <div class="message-content">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-text">
+                            <p>Hello! I'm your AI photography assistant. I can help you brainstorm shoot ideas, create treatments, and plan your photography projects. What would you like to work on today?</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-input-container">
+                <div class="quick-actions">
+                    <button class="quick-action-btn" onclick="sendQuickMessage('Brainstorm a creative portrait shoot concept')">
+                        <i class="fas fa-lightbulb"></i>
+                        Creative Ideas
+                    </button>
+                    <button class="quick-action-btn" onclick="sendQuickMessage('Create a treatment for a fashion shoot')">
+                        <i class="fas fa-file-alt"></i>
+                        Treatment
+                    </button>
+                    <button class="quick-action-btn" onclick="sendQuickMessage('Suggest lighting setup for outdoor shoot')">
+                        <i class="fas fa-sun"></i>
+                        Lighting
+                    </button>
+                </div>
+                
+                <div class="chat-input-wrapper">
+                    <textarea id="chatInput" placeholder="Describe your shoot idea or ask for help..." rows="3"></textarea>
+                    <button class="send-button" onclick="sendMessage()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/navigation.js"></script>
+    <script src="/js/Projects.js"></script>
+    <script src="/js/chat.js"></script>
+</body>
+</html>

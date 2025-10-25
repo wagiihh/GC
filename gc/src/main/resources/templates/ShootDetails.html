@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'${shoot.name} - Ghoneim Captures'">Shoot Details - Ghoneim Captures</title>
+    <link rel="icon" type="image/png" href="../images/Enclosed Vertical Logo Black.png">
+    <link rel="stylesheet" href="/css/CategoryShoots.css">
+    <link rel="stylesheet" href="/css/chat.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <a th:href="@{/landing/}" class="logo">
+                <img src="../images/Enclosed Horizontal Logo Black.png" alt="Ghoneim Captures" style="height: 40px; width: auto;">
+            </a>
+            
+            <nav>
+                <ul class="nav-links">
+                    <li><a th:href="@{/landing/projects}">PROJECTS</a></li>
+                    <a th:href="@{/landing/about}" class="nav-link">ABOUT</a>
+                    <a th:href="@{/landing/contact}" class="nav-link">CONTACT US</a>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-background">
+                <!-- Background image will be added via CSS -->
+            </div>
+            <div class="hero-content">
+                <h1 class="category-title" th:text="${shoot.name}">Shoot Name</h1>
+                <p class="category-description" th:text="${shoot.description}">Shoot Description</p>
+                <div class="shoot-meta">
+                    <span class="meta-item">
+                        <i class="fas fa-calendar"></i>
+                        <span th:text="${shoot.date}">Date</span>
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span th:text="${shoot.location}">Location</span>
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-images"></i>
+                        <span th:text="${shoot.images != null ? shoot.images.size() : 0}">0</span> Images
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-video"></i>
+                        <span th:text="${shoot.videos != null ? shoot.videos.size() : 0}">0</span> Videos
+                    </span>
+                </div>
+                <a th:href="@{/landing/projects/{categoryId}(categoryId=${shoot.category.id})}" class="back-link">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Category</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Media Grid Section -->
+        <section class="media-section">
+            <div class="container">
+                <!-- Images Grid -->
+                <div th:if="${shoot.images != null and !shoot.images.empty}" class="media-grid">
+                    <div th:each="image : ${shoot.images}" class="media-item image-item" 
+                         th:data-type="'image'" 
+                         th:data-url="${image.url}" 
+                         th:data-name="${image.name}" 
+                         onclick="previewMedia(this.dataset.url, this.dataset.type, this.dataset.name)">
+                        <div class="media-preview">
+                            <img th:src="${image.url}" th:alt="${image.name}" />
+                            <div class="media-overlay">
+                                <div class="media-type-badge">JPG</div>
+                                <div class="media-actions">
+                                    <button class="action-btn preview-btn" onclick="previewMedia(this.closest('.media-item').dataset.url, this.closest('.media-item').dataset.type, this.closest('.media-item').dataset.name); event.stopPropagation();">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="action-btn download-btn" onclick="downloadFile(this.closest('.media-item').dataset.url, this.closest('.media-item').dataset.name); event.stopPropagation();">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="media-info">
+                            <span class="media-name" th:text="${image.name}">image-name.jpg</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Videos Grid -->
+                <div th:if="${shoot.videos != null and !shoot.videos.empty}" class="media-grid">
+                    <div th:each="video : ${shoot.videos}" class="media-item video-item" 
+                         th:data-type="'video'" 
+                         th:data-url="${video.url}" 
+                         th:data-name="${video.name}" 
+                         onclick="previewMedia(this.dataset.url, this.dataset.type, this.dataset.name)">
+                        <div class="media-preview">
+                            <video th:src="${video.url}" th:poster="${video.url}"></video>
+                            <div class="play-overlay">
+                                <i class="fas fa-play"></i>
+                            </div>
+                            <div class="media-overlay">
+                                <div class="media-type-badge">MP4</div>
+                                <div class="media-actions">
+                                    <button class="action-btn preview-btn" onclick="previewMedia(this.closest('.media-item').dataset.url, this.closest('.media-item').dataset.type, this.closest('.media-item').dataset.name); event.stopPropagation();">
+                                        <i class="fas fa-play"></i>
+                                    </button>
+                                    <button class="action-btn download-btn" onclick="downloadFile(this.closest('.media-item').dataset.url, this.closest('.media-item').dataset.name); event.stopPropagation();">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="media-info">
+                            <span class="media-name" th:text="${video.name}">video-name.mp4</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- No media message -->
+                <div th:if="${(shoot.images == null or shoot.images.empty) and (shoot.videos == null or shoot.videos.empty)}" class="no-media">
+                    <div class="no-media-content">
+                        <i class="fas fa-images"></i>
+                        <h3>No media available</h3>
+                        <p>There are currently no photos or videos in this shoot.</p>
+                        <a th:href="@{/landing/projects/{categoryId}(categoryId=${shoot.category.id})}" class="back-to-projects">Back to Category</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Preview Modal -->
+    <div id="previewModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <div class="modal-main">
+                <div class="preview-container">
+                    <img id="previewImage" src="" alt="Preview" style="display: none;">
+                    <video id="previewVideo" controls style="display: none;"></video>
+                    <button class="nav-arrow nav-left" onclick="navigateMedia('prev')">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="nav-arrow nav-right" onclick="navigateMedia('next')">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <div class="modal-info">
+                    <div class="info-header">
+                        <h3>Info</h3>
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-row">
+                            <span class="info-label">Filename:</span>
+                            <span id="info-filename" class="info-value">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Type:</span>
+                            <span id="info-type" class="info-value">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Added:</span>
+                            <span id="info-date" class="info-value">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Usage Rights:</span>
+                            <div class="usage-rights">
+                                <label><input type="checkbox" checked> Digital</label>
+                                <label><input type="checkbox" checked> Events</label>
+                                <label><input type="checkbox" checked> POS / Trade / Retail</label>
+                                <label><input type="checkbox"> DR</label>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="download-all-btn" onclick="downloadCurrentFile()">
+                        <i class="fas fa-download"></i>
+                        Download file
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to preview media
+        function previewMedia(url, type, name) {
+            const modal = document.getElementById('previewModal');
+            const previewImage = document.getElementById('previewImage');
+            const previewVideo = document.getElementById('previewVideo');
+            const infoFilename = document.getElementById('info-filename');
+            const infoType = document.getElementById('info-type');
+            const infoDate = document.getElementById('info-date');
+
+            if (type === 'image') {
+                previewImage.src = url;
+                previewImage.style.display = 'block';
+                previewVideo.style.display = 'none';
+            } else {
+                previewVideo.src = url;
+                previewVideo.style.display = 'block';
+                previewImage.style.display = 'none';
+            }
+
+            infoFilename.textContent = name;
+            infoType.textContent = type.toUpperCase();
+            infoDate.textContent = new Date().toLocaleDateString();
+
+            modal.style.display = 'block';
+        }
+
+        // Function to close modal
+        function closeModal() {
+            document.getElementById('previewModal').style.display = 'none';
+        }
+
+        // Function to navigate media
+        function navigateMedia(direction) {
+            // Implementation for navigating between media items
+            console.log('Navigate:', direction);
+        }
+
+        // Function to download current file
+        function downloadCurrentFile() {
+            const previewImage = document.getElementById('previewImage');
+            const previewVideo = document.getElementById('previewVideo');
+            const url = previewImage.style.display !== 'none' ? previewImage.src : previewVideo.src;
+            const filename = document.getElementById('info-filename').textContent;
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            link.click();
+        }
+
+        // Function to download file
+        function downloadFile(url, filename) {
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            link.click();
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('previewModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+
+    <!-- AI Chat Assistant -->
+    <div id="chatAssistant" class="chat-assistant">
+        <div class="chat-toggle" onclick="toggleChat()">
+            <i class="fas fa-robot"></i>
+            <span class="chat-label">AI Assistant</span>
+        </div>
+        
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <div class="chat-title">
+                    <i class="fas fa-robot"></i>
+                    <span>Shoot Ideas Assistant</span>
+                </div>
+                <button class="chat-close" onclick="toggleChat()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <div class="message assistant-message">
+                    <div class="message-content">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-text">
+                            <p>Hello! I'm your AI photography assistant. I can help you brainstorm shoot ideas, create treatments, and plan your photography projects. What would you like to work on today?</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-input-container">
+                <div class="quick-actions">
+                    <button class="quick-action-btn" onclick="sendQuickMessage('Brainstorm a creative portrait shoot concept')">
+                        <i class="fas fa-lightbulb"></i>
+                        Creative Ideas
+                    </button>
+                    <button class="quick-action-btn" onclick="sendQuickMessage('Create a treatment for a fashion shoot')">
+                        <i class="fas fa-file-alt"></i>
+                        Treatment
+                    </button>
+                    <button class="quick-action-btn" onclick="sendQuickMessage('Suggest lighting setup for outdoor shoot')">
+                        <i class="fas fa-sun"></i>
+                        Lighting
+                    </button>
+                </div>
+                
+                <div class="chat-input-wrapper">
+                    <textarea id="chatInput" placeholder="Describe your shoot idea or ask for help..." rows="3"></textarea>
+                    <button class="send-button" onclick="sendMessage()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/chat.js"></script>
+</body>
+</html>

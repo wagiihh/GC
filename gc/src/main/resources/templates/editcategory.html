@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ghoneim Captures - Edit Category</title>
+    <link rel="icon" type="image/png" href="../images/Enclosed Vertical Logo Black.png">
     
     <!-- CSS Files -->
     <link rel="stylesheet" href="../css/contact.css">
@@ -199,6 +200,105 @@
             margin: 0;
         }
 
+        /* File Upload Styles */
+        .file-upload-container {
+            position: relative;
+            margin-top: 10px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-upload-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px dashed rgba(192, 169, 122, 0.3);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .file-upload-label:hover {
+            background: rgba(0, 0, 0, 0.5);
+            border-color: #c0a97a;
+            transform: translateY(-2px);
+        }
+
+        .file-upload-label i {
+            font-size: 2.5rem;
+            color: #c0a97a;
+            margin-bottom: 15px;
+        }
+
+        .file-upload-text {
+            color: #c0a97a;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .file-upload-hint {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        .image-preview {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .image-preview img {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 10px;
+            border: 2px solid #c0a97a;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .image-preview .preview-info {
+            margin-top: 10px;
+            color: #c0a97a;
+            font-size: 0.9rem;
+        }
+
+        /* Current Image Styles */
+        .current-image-container {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(192, 169, 122, 0.1);
+            border: 1px solid rgba(192, 169, 122, 0.3);
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .current-image-label {
+            color: #c0a97a;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .current-image {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 10px;
+            border: 2px solid #c0a97a;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
+        }
+
+        .current-image-info {
+            color: #ffffff;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .admin-container {
@@ -212,6 +312,44 @@
             .form-container {
                 padding: 25px;
             }
+        }
+        
+        /* Loading Overlay */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .loading-overlay.active {
+            display: flex;
+        }
+        .loader {
+            width: 80px;
+            height: 80px;
+            border: 8px solid rgba(192, 169, 122, 0.2);
+            border-top: 8px solid #c0a97a;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        .loader-text {
+            margin-top: 30px;
+            color: #c0a97a;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -229,7 +367,7 @@
 
         <!-- Form Container -->
         <div class="form-container">
-            <form th:action="@{/GC/updatecategory}" th:object="${category}" method="post" onsubmit="return validateForm()">
+            <form th:action="@{/GC/updatecategory}" th:object="${category}" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
                 <!-- Hidden ID field -->
                 <input type="hidden" th:field="*{id}">
                 
@@ -239,6 +377,32 @@
                     <input type="text" class="form-input" id="name" th:field="*{name}" placeholder="Enter category name" required>
                     <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error-message"></span>
                     <span id="error-name" class="error-message"></span>
+                </div>
+
+                <!-- Category Image Upload -->
+                <div class="form-group">
+                    <label for="categoryImage" class="form-label">Category Image</label>
+                    
+                    <!-- Current Image Display -->
+                    <div th:if="${category.image != null and category.image.url != null}" class="current-image-container">
+                        <div class="current-image-label">Current Image:</div>
+                        <img th:src="${category.image.url}" th:alt="${category.image.name}" class="current-image">
+                        <div class="current-image-info">
+                            <span th:text="${category.image.name}"></span>
+                        </div>
+                    </div>
+                    
+                    <!-- File Upload Section -->
+                    <div class="file-upload-container">
+                        <input type="file" class="file-input" id="categoryImage" name="categoryImage" accept="image/*,video/*" onchange="previewImage(this)">
+                        <label for="categoryImage" class="file-upload-label">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span class="file-upload-text">Choose New Category Image/Video</span>
+                            <span class="file-upload-hint">Click to upload or drag and drop (max 500MB, optional)</span>
+                        </label>
+                        <div id="image-preview" class="image-preview"></div>
+                    </div>
+                    <span id="error-image" class="error-message"></span>
                 </div>
 
                 <!-- Category Info -->
@@ -273,6 +437,7 @@
         // Form validation
         function validateForm() {
             const name = document.getElementById('name').value.trim();
+            const imageInput = document.getElementById('categoryImage');
 
             // Clear previous errors
             clearErrors();
@@ -291,7 +456,45 @@
                 isValid = false;
             }
 
+            // Image validation (optional but if provided, must be valid)
+            if (imageInput.files.length > 0) {
+                const file = imageInput.files[0];
+                const maxSize = 500 * 1024 * 1024; // 500MB
+                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'video/mp4', 'video/avi', 'video/mov', 'video/wmv', 'video/flv', 'video/webm', 'video/mkv'];
+
+                if (file.size > maxSize) {
+                    showError('error-image', 'File size must be less than 500MB');
+                    isValid = false;
+                } else if (!allowedTypes.includes(file.type)) {
+                    showError('error-image', 'Please upload a valid image or video file (JPEG, PNG, GIF, MP4, AVI, MOV, etc.)');
+                    isValid = false;
+                }
+            }
+
             return isValid;
+        }
+
+        // Image preview function
+        function previewImage(input) {
+            const preview = document.getElementById('image-preview');
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    preview.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview">
+                        <div class="preview-info">
+                            <i class="fas fa-check-circle"></i>
+                            New image selected: ${input.files[0].name}
+                        </div>
+                    `;
+                };
+                
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.innerHTML = '';
+            }
         }
 
         function showError(elementId, message) {
@@ -323,8 +526,16 @@
         document.querySelector('form').addEventListener('submit', function(e) {
             if (!validateForm()) {
                 e.preventDefault();
+            } else {
+                document.getElementById('loadingOverlay').classList.add('active');
             }
         });
     </script>
+    
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loader"></div>
+        <div class="loader-text">Updating Category...</div>
+    </div>
 </body>
 </html>

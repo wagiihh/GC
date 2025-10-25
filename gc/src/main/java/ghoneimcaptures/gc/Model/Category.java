@@ -13,6 +13,11 @@ public class Category {
     @NotBlank(message = "Name is required")
     private String name;
     
+    // One-to-One relationship with Image
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "image_id")
+    private Image image;
+    
     // One-to-Many relationship with Shoots
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Shoot> shoots;
@@ -23,6 +28,11 @@ public class Category {
     
     public Category(String name) {
         this.name = name;
+    }
+    
+    public Category(String name, Image image) {
+        this.name = name;
+        this.image = image;
     }
     
     // Getters and Setters
@@ -40,6 +50,14 @@ public class Category {
     
     public void setName(String name) {
         this.name = name;
+    }
+    
+    public Image getImage() {
+        return image;
+    }
+    
+    public void setImage(Image image) {
+        this.image = image;
     }
     
     public List<Shoot> getShoots() {

@@ -20,6 +20,10 @@ public class Image {
     @JoinColumn(name = "shoot_id")
     private Shoot shoot;
     
+    // One-to-One relationship with Category
+    @OneToOne(mappedBy = "image", fetch = FetchType.LAZY)
+    private Category category;
+    
     // Constructors
     public Image() {
     }
@@ -28,6 +32,11 @@ public class Image {
         this.name = name;
         this.url = url;
         this.shoot = shoot;
+    }
+    
+    public Image(String name, String url) {
+        this.name = name;
+        this.url = url;
     }
     
     // Getters and Setters
@@ -61,5 +70,13 @@ public class Image {
     
     public void setShoot(Shoot shoot) {
         this.shoot = shoot;
+    }
+    
+    public Category getCategory() {
+        return category;
+    }
+    
+    public void setCategory(Category category) {
+        this.category = category;
     }
 }

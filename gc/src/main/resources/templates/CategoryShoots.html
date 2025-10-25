@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'${category.name} - Ghoneim Captures'">Category Shoots - Ghoneim Captures</title>
+    <link rel="icon" type="image/png" href="../images/Enclosed Vertical Logo Black.png">
+    <link rel="stylesheet" href="/css/CategoryShoots.css">
+    <link rel="stylesheet" href="/css/chat.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <a th:href="@{/landing/}" class="logo">
+                <img src="../images/Enclosed Horizontal Logo Black.png" alt="Ghoneim Captures" style="height: 40px; width: auto;">
+            </a>
+            
+            <nav>
+                <ul class="nav-links">
+                    <li><a th:href="@{/landing/projects}">PROJECTS</a></li>
+                    <a th:href="@{/landing/about}" class="nav-link">ABOUT</a>
+                    <a th:href="@{/landing/contact}" class="nav-link">CONTACT US</a>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero-section" th:style="${category.image != null} ? 'background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(' + ${category.image.url} + '); background-size: cover; background-position: center; background-attachment: fixed;' : ''">
+            <div class="hero-content">
+                <h1 class="category-title" th:text="${category.name}">Category Name</h1>
+                <p class="category-description">Photography Collection</p>
+                <a th:href="@{/landing/projects}" class="back-link">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Projects</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Shoots Grid Section -->
+        <section class="shoots-section">
+            <div class="container">
+                <!-- Shoots Grid -->
+                <div th:if="${category.shoots != null and !category.shoots.empty}" class="shoots-grid">
+                    <div th:each="shoot : ${category.shoots}" class="shoot-item" th:data-shoot-id="${shoot.id}" onclick="viewShoot(this.dataset.shootId, this.dataset.shootName)">
+                        <div class="shoot-preview">
+                            <!-- Cover photo (first image) -->
+                            <img th:if="${shoot.images != null and !shoot.images.empty}" 
+                                 th:src="${shoot.images[0].url}" 
+                                 th:alt="${shoot.name}" 
+                                 class="cover-image" />
+                            <!-- Fallback if no images -->
+                            <div th:if="${shoot.images == null or shoot.images.empty}" class="no-cover">
+                                <i class="fas fa-camera"></i>
+                            </div>
+                            
+                            <div class="shoot-overlay">
+                                <div class="shoot-info">
+                                    <h3 class="shoot-name" th:text="${shoot.name}">Shoot Name</h3>
+                                    <p class="shoot-date" th:text="${shoot.date}">Date</p>
+                                    <p class="shoot-location" th:text="${shoot.location}">Location</p>
+                                </div>
+                                <div class="shoot-stats">
+                                    <div class="stat-item">
+                                        <i class="fas fa-images"></i>
+                                        <span th:text="${shoot.images != null ? shoot.images.size() : 0}">0</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <i class="fas fa-video"></i>
+                                        <span th:text="${shoot.videos != null ? shoot.videos.size() : 0}">0</span>
+                                    </div>
+                                </div>
+                                <div class="shoot-actions">
+                                    <button class="action-btn view-btn" onclick="viewShoot(this.closest('.shoot-item').dataset.shootId, this.closest('.shoot-item').dataset.shootName); event.stopPropagation();">
+                                        <i class="fas fa-eye"></i>
+                                        View Shoot
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- No media message -->
+                <div th:if="${category.shoots == null or category.shoots.empty}" class="no-media">
+                    <div class="no-media-content">
+                        <i class="fas fa-images"></i>
+                        <h3>No media available</h3>
+                        <p>There are currently no photos or videos in this category.</p>
+                        <a th:href="@{/landing/projects}" class="back-to-projects">Back to Projects</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Preview Modal -->
+    <div id="previewModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <div class="modal-main">
+                <div class="preview-container">
+                    <img id="previewImage" src="" alt="Preview" style="display: none;">
+                    <video id="previewVideo" controls style="display: none;"></video>
+                    <button class="nav-arrow nav-left" onclick="navigateMedia('prev')">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="nav-arrow nav-right" onclick="navigateMedia('next')">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <div class="modal-info">
+                    <div class="info-header">
+                        <h3>Info</h3>
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-row">
+                            <span class="info-label">Filename:</span>
+                            <span id="info-filename" class="info-value">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Type:</span>
+                            <span id="info-type" class="info-value">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Added:</span>
+                            <span id="info-date" class="info-value">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Usage Rights:</span>
+                            <div class="usage-rights">
+                                <label><input type="checkbox" checked> Digital</label>
+                                <label><input type="checkbox" checked> Events</label>
+                                <label><input type="checkbox" checked> POS / Trade / Retail</label>
+                                <label><input type="checkbox"> DR</label>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="download-all-btn" onclick="downloadCurrentFile()">
+                        <i class="fas fa-download"></i>
+                        Download file
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to view a shoot
+        function viewShoot(shootId, shootName) {
+            // Redirect to the shoot details page
+            window.location.href = `/landing/shoot/${shootId}`;
+        }
+
+        // Function to preview media (for individual images/videos)
+        function previewMedia(url, type, name) {
+            const modal = document.getElementById('previewModal');
+            const previewImage = document.getElementById('previewImage');
+            const previewVideo = document.getElementById('previewVideo');
+            const infoFilename = document.getElementById('info-filename');
+            const infoType = document.getElementById('info-type');
+            const infoDate = document.getElementById('info-date');
+
+            if (type === 'image') {
+                previewImage.src = url;
+                previewImage.style.display = 'block';
+                previewVideo.style.display = 'none';
+            } else {
+                previewVideo.src = url;
+                previewVideo.style.display = 'block';
+                previewImage.style.display = 'none';
+            }
+
+            infoFilename.textContent = name;
+            infoType.textContent = type.toUpperCase();
+            infoDate.textContent = new Date().toLocaleDateString();
+
+            modal.style.display = 'block';
+        }
+
+        // Function to close modal
+        function closeModal() {
+            document.getElementById('previewModal').style.display = 'none';
+        }
+
+        // Function to navigate media
+        function navigateMedia(direction) {
+            // Implementation for navigating between media items
+            console.log('Navigate:', direction);
+        }
+
+        // Function to download current file
+        function downloadCurrentFile() {
+            const previewImage = document.getElementById('previewImage');
+            const previewVideo = document.getElementById('previewVideo');
+            const url = previewImage.style.display !== 'none' ? previewImage.src : previewVideo.src;
+            const filename = document.getElementById('info-filename').textContent;
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            link.click();
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('previewModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+
+    <!-- AI Chat Assistant -->
+    <div id="chatAssistant" class="chat-assistant">
+        <div class="chat-toggle" onclick="toggleChat()">
+            <i class="fas fa-robot"></i>
+            <span class="chat-label">AI Assistant</span>
+        </div>
+        
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <div class="chat-title">
+                    <i class="fas fa-robot"></i>
+                    <span>Shoot Ideas Assistant</span>
+                </div>
+                <button class="chat-close" onclick="toggleChat()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <div class="message assistant-message">
+                    <div class="message-content">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-text">
+                            <p>Hello! I'm your AI photography assistant. I can help you brainstorm shoot ideas, create treatments, and plan your photography projects. What would you like to work on today?</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-input-container">
+                <div class="quick-actions">
+                    <button class="quick-action-btn" onclick="sendQuickMessage('Brainstorm a creative portrait shoot concept')">
+                        <i class="fas fa-lightbulb"></i>
+                        Creative Ideas
+                    </button>
+                    <button class="quick-action-btn" onclick="sendQuickMessage('Create a treatment for a fashion shoot')">
+                        <i class="fas fa-file-alt"></i>
+                        Treatment
+                    </button>
+                    <button class="quick-action-btn" onclick="sendQuickMessage('Suggest lighting setup for outdoor shoot')">
+                        <i class="fas fa-sun"></i>
+                        Lighting
+                    </button>
+                </div>
+                
+                <div class="chat-input-wrapper">
+                    <textarea id="chatInput" placeholder="Describe your shoot idea or ask for help..." rows="3"></textarea>
+                    <button class="send-button" onclick="sendMessage()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/chat.js"></script>
+</body>
+</html>

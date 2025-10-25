@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghoneim Captures - Add Shoot</title>
+    <link rel="icon" type="image/png" href="../images/Enclosed Vertical Logo Black.png">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="../css/contact.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #222222 0%, #000000 100%);
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(192, 169, 122, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(192, 169, 122, 0.05) 0%, transparent 50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .admin-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            background: rgba(34, 34, 34, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(192, 169, 122, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .page-title {
+            color: #c0a97a;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .page-subtitle {
+            color: #ffffff;
+            font-size: 1.1rem;
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            background: rgba(34, 34, 34, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(192, 169, 122, 0.2);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            color: #c0a97a;
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(192, 169, 122, 0.3);
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #c0a97a;
+            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 15px rgba(192, 169, 122, 0.3);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-upload-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px dashed rgba(192, 169, 122, 0.3);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .file-upload-label:hover {
+            background: rgba(0, 0, 0, 0.5);
+            border-color: #c0a97a;
+            transform: translateY(-2px);
+        }
+
+        .file-upload-label i {
+            font-size: 2.5rem;
+            color: #c0a97a;
+            margin-bottom: 15px;
+        }
+
+        .file-upload-text {
+            color: #c0a97a;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .file-upload-hint {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        .image-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .preview-item {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid #c0a97a;
+        }
+
+        .submit-button {
+            background: linear-gradient(135deg, #c0a97a 0%, #a68b5b 100%);
+            color: #000;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 30px auto 0;
+            box-shadow: 0 6px 20px rgba(192, 169, 122, 0.3);
+            width: 100%;
+            justify-content: center;
+        }
+
+        .submit-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(192, 169, 122, 0.4);
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .back-link a {
+            color: #c0a97a;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 25px;
+            border: 2px solid #c0a97a;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link a:hover {
+            background: #c0a97a;
+            color: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(192, 169, 122, 0.3);
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-error {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid #f44336;
+            color: #f44336;
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        
+        .loading-overlay.active {
+            display: flex;
+        }
+        
+        .loader {
+            width: 80px;
+            height: 80px;
+            border: 8px solid rgba(192, 169, 122, 0.2);
+            border-top: 8px solid #c0a97a;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        .loader-text {
+            margin-top: 30px;
+            color: #c0a97a;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .progress-container {
+            width: 300px;
+            margin-top: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(192, 169, 122, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #c0a97a, #a68b5b);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            color: #c0a97a;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .upload-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 15px;
+            }
+            .form-container {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-camera"></i>
+                Add New Shoot
+            </h1>
+            <p class="page-subtitle">Create a new photography shoot</p>
+        </div>
+
+        <!-- Success/Error Messages -->
+        <div th:if="${error}" class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i>
+            <span th:text="${error}"></span>
+        </div>
+
+        <!-- Form Container -->
+        <div class="form-container">
+            <form th:action="@{/admin/shoots/add}" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="name" class="form-label">Shoot Name *</label>
+                    <input type="text" class="form-input" id="name" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description" class="form-label">Description *</label>
+                    <textarea class="form-textarea" id="description" name="description" rows="4" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="date" class="form-label">Date *</label>
+                    <input type="date" class="form-input" id="date" name="date" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="location" class="form-label">Location *</label>
+                    <input type="text" class="form-input" id="location" name="location" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="categoryId" class="form-label">Category *</label>
+                    <select class="form-select" id="categoryId" name="categoryId" required>
+                        <option value="">Select a category</option>
+                        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="images" class="form-label">Images</label>
+                    <div class="file-upload-container">
+                        <input type="file" id="images" name="images" multiple accept="image/*" class="file-input">
+                        <label for="images" class="file-upload-label">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span class="file-upload-text">Choose Images</span>
+                            <span class="file-upload-hint">Click to upload images (max 500MB per file)</span>
+                        </label>
+                        <div class="image-preview" id="imagePreview"></div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="videos" class="form-label">Videos</label>
+                    <div class="file-upload-container">
+                        <input type="file" id="videos" name="videos" multiple accept="video/*" class="file-input">
+                        <label for="videos" class="file-upload-label">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span class="file-upload-text">Choose Videos</span>
+                            <span class="file-upload-hint">Click to upload videos (max 500MB per file)</span>
+                        </label>
+                        <div class="image-preview" id="videoPreview"></div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-button">
+                    <i class="fas fa-plus"></i>
+                    Create Shoot
+                </button>
+            </form>
+        </div>
+
+        <div class="back-link">
+            <a th:href="@{/admin/shoots}">
+                <i class="fas fa-arrow-left"></i>
+                Back to Manage Shoots
+            </a>
+        </div>
+    </div>
+    
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loader"></div>
+        <div class="loader-text">Creating Shoot...</div>
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">Preparing upload...</div>
+            <div class="upload-stats">
+                <span id="filesProcessed">0</span> / <span id="totalFiles">0</span> files
+                <span id="uploadSpeed">0 MB/s</span>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let uploadStartTime = 0;
+        let totalFiles = 0;
+        let processedFiles = 0;
+
+        // Show loading overlay on form submission with progress tracking
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const imageFiles = document.getElementById('images').files;
+            const videoFiles = document.getElementById('videos').files;
+            totalFiles = imageFiles.length + videoFiles.length;
+            
+            // Validate file sizes before upload
+            if (!validateFileSizes(imageFiles, videoFiles)) {
+                e.preventDefault();
+                return false;
+            }
+            
+            document.getElementById('totalFiles').textContent = totalFiles;
+            document.getElementById('loadingOverlay').classList.add('active');
+            uploadStartTime = Date.now();
+            
+            // Simulate progress updates (in real implementation, this would be server-sent events)
+            simulateProgress();
+        });
+
+        function validateFileSizes(imageFiles, videoFiles) {
+            const maxSize = 500 * 1024 * 1024; // 500MB
+            const maxTotalSize = 2 * 1024 * 1024 * 1024; // 2GB total
+            let totalSize = 0;
+            let invalidFiles = [];
+
+            // Check image files
+            Array.from(imageFiles).forEach(file => {
+                totalSize += file.size;
+                if (file.size > maxSize) {
+                    invalidFiles.push(`${file.name} (${formatFileSize(file.size)})`);
+                }
+            });
+
+            // Check video files
+            Array.from(videoFiles).forEach(file => {
+                totalSize += file.size;
+                if (file.size > maxSize) {
+                    invalidFiles.push(`${file.name} (${formatFileSize(file.size)})`);
+                }
+            });
+
+            if (invalidFiles.length > 0) {
+                alert(`The following files exceed the 500MB limit:\n${invalidFiles.join('\n')}`);
+                return false;
+            }
+
+            if (totalSize > maxTotalSize) {
+                alert(`Total upload size (${formatFileSize(totalSize)}) exceeds the 2GB limit. Please reduce the number of files or their sizes.`);
+                return false;
+            }
+
+            return true;
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function simulateProgress() {
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            const filesProcessed = document.getElementById('filesProcessed');
+            const uploadSpeed = document.getElementById('uploadSpeed');
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 15; // Simulate progress
+                if (progress > 100) progress = 100;
+                
+                progressFill.style.width = progress + '%';
+                processedFiles = Math.floor((progress / 100) * totalFiles);
+                filesProcessed.textContent = processedFiles;
+                
+                if (progress < 30) {
+                    progressText.textContent = 'Preparing files...';
+                } else if (progress < 60) {
+                    progressText.textContent = 'Uploading to cloud storage...';
+                } else if (progress < 90) {
+                    progressText.textContent = 'Processing media...';
+                } else {
+                    progressText.textContent = 'Finalizing shoot...';
+                }
+                
+                // Calculate upload speed
+                const elapsed = (Date.now() - uploadStartTime) / 1000;
+                const speed = (processedFiles / elapsed).toFixed(1);
+                uploadSpeed.textContent = speed + ' files/s';
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    progressText.textContent = 'Upload complete!';
+                }
+            }, 200);
+        }
+        
+        // Image preview
+        document.getElementById('images').addEventListener('change', function(e) {
+            const preview = document.getElementById('imagePreview');
+            preview.innerHTML = '';
+            Array.from(e.target.files).forEach(file => {
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.className = 'preview-item';
+                preview.appendChild(img);
+            });
+        });
+        
+        // Video preview
+        document.getElementById('videos').addEventListener('change', function(e) {
+            const preview = document.getElementById('videoPreview');
+            preview.innerHTML = '';
+            Array.from(e.target.files).forEach(file => {
+                const video = document.createElement('video');
+                video.src = URL.createObjectURL(file);
+                video.className = 'preview-item';
+                video.controls = true;
+                preview.appendChild(video);
+            });
+        });
+    </script>
+</body>
+</html>

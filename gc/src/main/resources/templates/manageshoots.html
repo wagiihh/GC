@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghoneim Captures - Manage Shoots</title>
+    <link rel="icon" type="image/png" href="../images/Enclosed Vertical Logo Black.png">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="../css/contact.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* Manage Shoots Page Specific Styles */
+        body {
+            background: linear-gradient(135deg, #222222 0%, #000000 100%);
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(192, 169, 122, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(192, 169, 122, 0.05) 0%, transparent 50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            background: rgba(34, 34, 34, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(192, 169, 122, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .page-title {
+            color: #c0a97a;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .page-subtitle {
+            color: #ffffff;
+            font-size: 1.1rem;
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #c0a97a 0%, #a68b5b 100%);
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(192, 169, 122, 0.3);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(192, 169, 122, 0.4);
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid #4caf50;
+            color: #4caf50;
+        }
+
+        .alert-error {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid #f44336;
+            color: #f44336;
+        }
+
+        .data-table {
+            width: 100%;
+            background: rgba(34, 34, 34, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(192, 169, 122, 0.2);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .data-table thead {
+            background: rgba(192, 169, 122, 0.2);
+        }
+
+        .data-table th {
+            padding: 20px;
+            text-align: left;
+            color: #c0a97a;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        .data-table td {
+            padding: 20px;
+            color: #ffffff;
+            border-top: 1px solid rgba(192, 169, 122, 0.1);
+        }
+
+        .data-table tbody tr:hover {
+            background: rgba(192, 169, 122, 0.05);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-edit {
+            background: rgba(33, 150, 243, 0.2);
+            color: #2196f3;
+            border: 1px solid #2196f3;
+        }
+
+        .btn-edit:hover {
+            background: rgba(33, 150, 243, 0.3);
+        }
+
+        .btn-delete {
+            background: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+            border: 1px solid #f44336;
+        }
+
+        .btn-delete:hover {
+            background: rgba(244, 67, 54, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .data-table {
+                font-size: 0.9rem;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 12px;
+            }
+
+            .btn-sm {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Manage Shoots</h1>
+            <p class="page-subtitle">Create, edit, and manage your photography shoots</p>
+        </div>
+        
+        <!-- Success/Error Messages -->
+        <div th:if="${success}" class="alert alert-success">
+            <i class="fas fa-check-circle"></i>
+            <span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i>
+            <span th:text="${error}"></span>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a th:href="@{/admin/shoots/add}" class="action-btn">
+                <i class="fas fa-plus-circle"></i>
+                Add New Shoot
+            </a>
+            <a th:href="@{/admin/}" class="action-btn" style="background: rgba(158, 158, 158, 0.2); color: #ffffff; box-shadow: 0 4px 15px rgba(158, 158, 158, 0.2);">
+                <i class="fas fa-arrow-left"></i>
+                Back to Admin
+            </a>
+        </div>
+        
+        <!-- Data Table -->
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Date</th>
+                    <th>Location</th>
+                    <th>Images</th>
+                    <th>Videos</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="shoot : ${shoots}">
+                    <td th:text="${shoot.id}"></td>
+                    <td th:text="${shoot.name}"></td>
+                    <td th:text="${shoot.category != null ? shoot.category.name : 'N/A'}"></td>
+                    <td th:text="${shoot.date}"></td>
+                    <td th:text="${shoot.location}"></td>
+                    <td>
+                        <span style="color: #c0a97a;">
+                            <i class="fas fa-image"></i>
+                            <span th:text="${shoot.images != null ? shoot.images.size() : 0}">0</span>
+                        </span>
+                    </td>
+                    <td>
+                        <span style="color: #c0a97a;">
+                            <i class="fas fa-video"></i>
+                            <span th:text="${shoot.videos != null ? shoot.videos.size() : 0}">0</span>
+                        </span>
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            <a th:href="@{/admin/shoots/edit/{id}(id=${shoot.id})}" class="btn-sm btn-edit">
+                                <i class="fas fa-edit"></i>
+                                Edit
+                            </a>
+                            <a th:href="@{/admin/shoots/delete/{id}(id=${shoot.id})}" 
+                               class="btn-sm btn-delete" 
+                               onclick="return confirm('Are you sure you want to delete this shoot?')">
+                                <i class="fas fa-trash"></i>
+                                Delete
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${shoots == null or shoots.empty}">
+                    <td colspan="8" style="text-align: center; padding: 40px;">
+                        <i class="fas fa-info-circle" style="font-size: 3rem; color: #c0a97a; margin-bottom: 20px; display: block;"></i>
+                        <span style="color: #ffffff; font-size: 1.2rem;">No shoots found</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
