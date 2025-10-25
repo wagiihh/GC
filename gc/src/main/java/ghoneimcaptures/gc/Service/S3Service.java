@@ -24,7 +24,7 @@ public class S3Service {
 
     public S3Service(S3Client s3Client) {
         this.s3Client = s3Client;
-        this.executorService = Executors.newFixedThreadPool(10); // Thread pool for async uploads
+        this.executorService = Executors.newFixedThreadPool(20); // Increased thread pool for better parallel processing
     }
 
     public void uploadFile(String bucketName, String key, File file) {
@@ -51,8 +51,8 @@ public class S3Service {
     public CompletableFuture<Void> uploadLargeFileAsync(String bucketName, String key, File file) {
         return CompletableFuture.runAsync(() -> {
             try {
-                // For files larger than 100MB, use multipart upload
-                if (file.length() > 100 * 1024 * 1024) {
+                // For files larger than 50MB, use multipart upload (lowered threshold)
+                if (file.length() > 50 * 1024 * 1024) {
                     uploadMultipartFile(bucketName, key, file);
                 } else {
                     uploadFile(bucketName, key, file);
@@ -64,34 +64,69 @@ public class S3Service {
     }
 
     /**
-     * Multipart upload for large files
+     * Optimized multipart upload for large files with proper chunking
      */
     private void uploadMultipartFile(String bucketName, String key, File file) {
+        String uploadId = null;
         try {
+            // Create multipart upload
             CreateMultipartUploadRequest createRequest = CreateMultipartUploadRequest.builder()
                     .bucket(bucketName)
                     .key(key)
                     .build();
 
             CreateMultipartUploadResponse createResponse = s3Client.createMultipartUpload(createRequest);
-            String uploadId = createResponse.uploadId();
+            uploadId = createResponse.uploadId();
 
-            // Upload parts (simplified - in production, you'd want to handle this more robustly)
-            UploadPartRequest uploadPartRequest = UploadPartRequest.builder()
-                    .bucket(bucketName)
-                    .key(key)
-                    .uploadId(uploadId)
-                    .partNumber(1)
-                    .build();
+            // Calculate optimal part size (minimum 5MB, maximum 5GB per part)
+            long fileSize = file.length();
+            long partSize = Math.max(5 * 1024 * 1024, fileSize / 10000); // At least 5MB per part
+            partSize = Math.min(partSize, 5L * 1024 * 1024 * 1024); // Max 5GB per part
+            
+            // For files under 100MB, use single part
+            if (fileSize < 100 * 1024 * 1024) {
+                partSize = fileSize;
+            }
 
-            s3Client.uploadPart(uploadPartRequest, RequestBody.fromFile(file));
+            java.util.List<CompletedPart> completedParts = new java.util.ArrayList<>();
+            int partNumber = 1;
+            long position = 0;
+
+            try (java.io.RandomAccessFile randomAccessFile = new java.io.RandomAccessFile(file, "r")) {
+                while (position < fileSize) {
+                    long currentPartSize = Math.min(partSize, fileSize - position);
+                    
+                    // Read file chunk
+                    byte[] buffer = new byte[(int) currentPartSize];
+                    randomAccessFile.seek(position);
+                    randomAccessFile.readFully(buffer);
+
+                    // Upload part
+                    UploadPartRequest uploadPartRequest = UploadPartRequest.builder()
+                            .bucket(bucketName)
+                            .key(key)
+                            .uploadId(uploadId)
+                            .partNumber(partNumber)
+                            .build();
+
+                    UploadPartResponse uploadPartResponse = s3Client.uploadPart(
+                            uploadPartRequest, 
+                            RequestBody.fromBytes(buffer)
+                    );
+
+                    completedParts.add(CompletedPart.builder()
+                            .partNumber(partNumber)
+                            .eTag(uploadPartResponse.eTag())
+                            .build());
+
+                    position += currentPartSize;
+                    partNumber++;
+                }
+            }
 
             // Complete multipart upload
             CompletedMultipartUpload completedUpload = CompletedMultipartUpload.builder()
-                    .parts(CompletedPart.builder()
-                            .partNumber(1)
-                            .eTag(s3Client.uploadPart(uploadPartRequest, RequestBody.fromFile(file)).eTag())
-                            .build())
+                    .parts(completedParts)
                     .build();
 
             CompleteMultipartUploadRequest completeRequest = CompleteMultipartUploadRequest.builder()
@@ -104,6 +139,19 @@ public class S3Service {
             s3Client.completeMultipartUpload(completeRequest);
 
         } catch (Exception e) {
+            // Abort multipart upload on failure
+            if (uploadId != null) {
+                try {
+                    AbortMultipartUploadRequest abortRequest = AbortMultipartUploadRequest.builder()
+                            .bucket(bucketName)
+                            .key(key)
+                            .uploadId(uploadId)
+                            .build();
+                    s3Client.abortMultipartUpload(abortRequest);
+                } catch (Exception abortException) {
+                    System.err.println("Failed to abort multipart upload: " + abortException.getMessage());
+                }
+            }
             throw new RuntimeException("Multipart upload failed: " + e.getMessage(), e);
         }
     }

@@ -95,7 +95,7 @@ table {
 }
 
 .nav-link:hover {
-    color: #C0A97A;
+    color: #9ca3af;
     background-color: rgba(192, 169, 122, 0.1);
     transform: translateY(-2px);
 }
@@ -115,7 +115,7 @@ table {
 }
 
 .login-btn {
-    background-color: #C0A97A;
+    background-color: #9ca3af;
     color: #000000;
     border: none;
     border-radius: 5px;
@@ -176,7 +176,7 @@ table {
 }
 
 .footer-section p i {
-    color: #C0A97A;
+    color: #9ca3af;
     margin-right: 10px;
     width: 20px;
 }
@@ -197,7 +197,7 @@ table {
 }
 
 .social-link:hover {
-    color: #C0A97A;
+    color: #9ca3af;
     transform: translateX(5px);
 }
 

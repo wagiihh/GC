@@ -110,6 +110,8 @@ public class LandingController {
                 modelAndView.addObject("category", category);
                 modelAndView.addObject("shoots", shoots);
                 System.out.println("Found " + shoots.size() + " shoots for category: " + category.getName());
+                System.out.println("Category name: " + category.getName());
+                System.out.println("Category object: " + category);
             } else {
                 modelAndView.addObject("category", null);
                 modelAndView.addObject("shoots", new java.util.ArrayList<>());

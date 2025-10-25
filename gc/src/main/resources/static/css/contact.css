@@ -113,7 +113,7 @@ nav {
 }
 
 .nav-links a:hover {
-    color: #C0A97A;
+    color: #9ca3af;
     background-color: rgba(192, 169, 122, 0.1);
     transform: translateY(-2px);
 }
@@ -204,7 +204,7 @@ main {
     left: 0;
     width: 80px;
     height: 4px;
-    background: linear-gradient(90deg, #C0A97A, transparent);
+    background: linear-gradient(90deg, #9ca3af, transparent);
     border-radius: 2px;
 }
 
@@ -251,7 +251,7 @@ main {
 .form-group input:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: #C0A97A;
+    border-color: #9ca3af;
     background: rgba(0, 0, 0, 0.5);
     box-shadow: 
         0 0 0 3px rgba(192, 169, 122, 0.2),
@@ -266,7 +266,7 @@ main {
 
 /* Submit Button - Matching LandingPage Button Style */
 .submit-btn {
-    background-color: #C0A97A;
+    background-color: #9ca3af;
     color: #000000;
     border: none;
     padding: 15px 35px;
@@ -415,7 +415,7 @@ main {
     width: 20px;
     height: 20px;
     margin: -10px 0 0 -10px;
-    border: 2px solid #C0A97A;
+    border: 2px solid #9ca3af;
     border-top: 2px solid transparent;
     border-radius: 50%;
     animation: spin 1s linear infinite;
@@ -432,7 +432,7 @@ main {
     color: #F8F8F8;
     padding: 20px;
     border-radius: 12px;
-    border: 1px solid #C0A97A;
+    border: 1px solid #9ca3af;
     margin-top: 20px;
     text-align: center;
     animation: slideIn 0.5s ease;

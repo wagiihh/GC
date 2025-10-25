@@ -104,7 +104,7 @@ public class ShootController {
             // Save shoot first to get ID
             Shoot savedShoot = shootRepository.save(shoot);
 
-            // Handle images asynchronously
+            // Handle images asynchronously with optimized parallel processing
             List<CompletableFuture<Image>> imageFutures = new ArrayList<>();
             if (images != null) {
                 for (MultipartFile imageFile : images) {
@@ -118,10 +118,14 @@ public class ShootController {
                                 }
                                 String s3Key = "shoots/" + savedShoot.getId() + "/images/" + UUID.randomUUID() + extension;
 
-                                // Upload to S3 asynchronously
+                                // Upload to S3 asynchronously with timeout
                                 File tempFile = File.createTempFile("temp-", extension);
                                 imageFile.transferTo(tempFile);
-                                s3Service.uploadLargeFileAsync(bucketName, s3Key, tempFile).join();
+                                
+                                // Use optimized upload with timeout
+                                s3Service.uploadLargeFileAsync(bucketName, s3Key, tempFile)
+                                    .orTimeout(300, java.util.concurrent.TimeUnit.SECONDS) // 5 minute timeout
+                                    .join();
                                 tempFile.delete();
 
                                 // Generate CloudFront URL
@@ -134,7 +138,7 @@ public class ShootController {
                                 image.setShoot(savedShoot);
 
                                 return image;
-                            } catch (IOException e) {
+                            } catch (Exception e) {
                                 System.err.println("Error uploading image: " + e.getMessage());
                                 return null;
                             }
@@ -144,7 +148,7 @@ public class ShootController {
                 }
             }
 
-            // Handle videos asynchronously
+            // Handle videos asynchronously with optimized parallel processing
             List<CompletableFuture<Video>> videoFutures = new ArrayList<>();
             if (videos != null) {
                 for (MultipartFile videoFile : videos) {
@@ -158,10 +162,14 @@ public class ShootController {
                                 }
                                 String s3Key = "shoots/" + savedShoot.getId() + "/videos/" + UUID.randomUUID() + extension;
 
-                                // Upload to S3 asynchronously
+                                // Upload to S3 asynchronously with timeout
                                 File tempFile = File.createTempFile("temp-", extension);
                                 videoFile.transferTo(tempFile);
-                                s3Service.uploadLargeFileAsync(bucketName, s3Key, tempFile).join();
+                                
+                                // Use optimized upload with timeout
+                                s3Service.uploadLargeFileAsync(bucketName, s3Key, tempFile)
+                                    .orTimeout(600, java.util.concurrent.TimeUnit.SECONDS) // 10 minute timeout for videos
+                                    .join();
                                 tempFile.delete();
 
                                 // Generate CloudFront URL
@@ -174,7 +182,7 @@ public class ShootController {
                                 video.setShoot(savedShoot);
 
                                 return video;
-                            } catch (IOException e) {
+                            } catch (Exception e) {
                                 System.err.println("Error uploading video: " + e.getMessage());
                                 return null;
                             }

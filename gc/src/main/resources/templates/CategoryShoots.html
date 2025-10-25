@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="'${category.name} - Ghoneim Captures'">Category Shoots - Ghoneim Captures</title>
-    <link rel="icon" type="image/png" href="../images/Enclosed Vertical Logo Black.png">
+    <title th:text="${#strings.isEmpty(category.name) ? 'Category Shoots - Ghoneim Captures' : category.name + ' - Ghoneim Captures'}">Category Shoots - Ghoneim Captures</title>
+    <link rel="icon" type="image/png" href="/images/Icon Black.png">
     <link rel="stylesheet" href="/css/CategoryShoots.css">
     <link rel="stylesheet" href="/css/chat.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -15,7 +15,7 @@
     <header class="header">
         <div class="header-container">
             <a th:href="@{/landing/}" class="logo">
-                <img src="../images/Enclosed Horizontal Logo Black.png" alt="Ghoneim Captures" style="height: 40px; width: auto;">
+                <img src="/images/Enclosed Horizontal Logo Black.png" alt="Ghoneim Captures" style="height: 40px; width: auto;">
             </a>
             
             <nav>
@@ -76,7 +76,7 @@
                                     </div>
                                 </div>
                                 <div class="shoot-actions">
-                                    <button class="action-btn view-btn" onclick="viewShoot(this.closest('.shoot-item').dataset.shootId, this.closest('.shoot-item').dataset.shootName); event.stopPropagation();">
+                                    <button class="view-btn" onclick="viewShoot(this.closest('.shoot-item').dataset.shootId, this.closest('.shoot-item').dataset.shootName); event.stopPropagation();">
                                         <i class="fas fa-eye"></i>
                                         View Shoot
                                     </button>
@@ -220,14 +220,14 @@
     <!-- AI Chat Assistant -->
     <div id="chatAssistant" class="chat-assistant">
         <div class="chat-toggle" onclick="toggleChat()">
-            <i class="fas fa-robot"></i>
+            <img src="/images/Icon White.png" alt="AI Assistant" style="width: 18px; height: 18px; object-fit: contain;">
             <span class="chat-label">AI Assistant</span>
         </div>
         
         <div class="chat-window" id="chatWindow">
             <div class="chat-header">
                 <div class="chat-title">
-                    <i class="fas fa-robot"></i>
+                    <img src="/images/Icon White.png" alt="AI Assistant" style="width: 18px; height: 18px; object-fit: contain;">
                     <span>Shoot Ideas Assistant</span>
                 </div>
                 <button class="chat-close" onclick="toggleChat()">
@@ -239,7 +239,7 @@
                 <div class="message assistant-message">
                     <div class="message-content">
                         <div class="message-avatar">
-                            <i class="fas fa-robot"></i>
+                            <img src="/images/Icon Black.png" alt="AI Assistant" style="width: 18px; height: 18px; object-fit: contain;">
                         </div>
                         <div class="message-text">
                             <p>Hello! I'm your AI photography assistant. I can help you brainstorm shoot ideas, create treatments, and plan your photography projects. What would you like to work on today?</p>

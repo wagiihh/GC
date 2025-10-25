@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ghoneim Captures - Add Shoot</title>
-    <link rel="icon" type="image/png" href="../images/Enclosed Vertical Logo Black.png">
+    <link rel="icon" type="image/png" href="/images/Icon Black.png">
     
     <!-- CSS Files -->
     <link rel="stylesheet" href="../css/contact.css">
@@ -513,8 +513,8 @@
             
             let progress = 0;
             const interval = setInterval(() => {
-                progress += Math.random() * 15; // Simulate progress
-                if (progress > 100) progress = 100;
+                progress += Math.random() * 5 + 1; // More realistic progress (1-6% increments)
+                if (progress > 95) progress = 95; // Don't complete until actually done
                 
                 progressFill.style.width = progress + '%';
                 processedFiles = Math.floor((progress / 100) * totalFiles);

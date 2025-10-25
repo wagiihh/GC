@@ -110,7 +110,7 @@ class ChatManager {
         messageDiv.className = `message ${sender}-message`;
         
         const avatar = sender === 'assistant' ? 
-            '<i class="fas fa-robot"></i>' : 
+            '<img src="/images/Icon Black.png" alt="AI Assistant" style="width: 20px; height: 20px; object-fit: contain;">' : 
             '<i class="fas fa-user"></i>';
         
         messageDiv.innerHTML = `
@@ -141,7 +141,7 @@ class ChatManager {
         typingDiv.innerHTML = `
             <div class="message-content">
                 <div class="message-avatar">
-                    <i class="fas fa-robot"></i>
+                    <img src="/images/Icon Black.png" alt="AI Assistant" style="width: 20px; height: 20px; object-fit: contain;">
                 </div>
                 <div class="message-text">
                     <div class="typing-dots">
@@ -214,7 +214,7 @@ class ChatManager {
         messageDiv.className = `message ${sender}-message`;
         
         const avatar = sender === 'assistant' ? 
-            '<i class="fas fa-robot"></i>' : 
+            '<img src="/images/Icon Black.png" alt="AI Assistant" style="width: 20px; height: 20px; object-fit: contain;">' : 
             '<i class="fas fa-user"></i>';
         
         messageDiv.innerHTML = `
