@@ -7,6 +7,7 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import jakarta.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +18,17 @@ public class ChatController {
 
     @Value("${openai.api.key:}")
     private String openaiApiKey;
+    
+    @PostConstruct
+    public void init() {
+        // Trim the API key and log status (without exposing the key)
+        if (openaiApiKey != null) {
+            openaiApiKey = openaiApiKey.trim();
+            System.out.println("OpenAI API Key loaded: " + (openaiApiKey.isEmpty() ? "EMPTY" : "LENGTH=" + openaiApiKey.length()));
+        } else {
+            System.out.println("OpenAI API Key: NOT SET");
+        }
+    }
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -29,8 +41,13 @@ public class ChatController {
             String message = request.get("message");
             String context = request.getOrDefault("context", "general");
             
+            System.out.println("=== Chat Request ===");
+            System.out.println("Message: " + message);
+            System.out.println("Context: " + context);
+            System.out.println("API Key configured: " + (openaiApiKey != null && !openaiApiKey.isEmpty()));
+            
             if (openaiApiKey == null || openaiApiKey.isEmpty()) {
-                // Fallback response when API key is not configured
+                System.out.println("WARNING: OpenAI API key not configured, using fallback response");
                 response.put("response", getFallbackResponse(message, context));
                 return ResponseEntity.ok(response);
             }
@@ -61,19 +78,28 @@ public class ChatController {
             
             // Make request to OpenAI
             String openaiUrl = "https://api.openai.com/v1/chat/completions";
+            System.out.println("Calling OpenAI API at: " + openaiUrl);
+            
             ResponseEntity<String> openaiResponse = restTemplate.exchange(
                 openaiUrl, HttpMethod.POST, entity, String.class);
+            
+            System.out.println("OpenAI Response Status: " + openaiResponse.getStatusCode());
+            System.out.println("OpenAI Response Body: " + openaiResponse.getBody());
             
             // Parse response
             JsonNode jsonNode = objectMapper.readTree(openaiResponse.getBody());
             String aiResponse = jsonNode.get("choices").get(0).get("message").get("content").asText();
             
+            System.out.println("AI Response: " + aiResponse);
+            
             response.put("response", aiResponse);
             return ResponseEntity.ok(response);
             
         } catch (Exception e) {
-            System.err.println("Error calling OpenAI API: " + e.getMessage());
-            response.put("response", getFallbackResponse(request.get("message"), request.getOrDefault("context", "general")));
+            System.err.println("ERROR calling OpenAI API: " + e.getMessage());
+            e.printStackTrace();
+            // Return a helpful error message to the user
+            response.put("response", "I apologize, but I'm having trouble connecting to the AI service. Please try again in a moment. Error: " + e.getMessage());
             return ResponseEntity.ok(response);
         }
     }

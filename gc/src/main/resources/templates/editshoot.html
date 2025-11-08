@@ -149,6 +149,44 @@
             object-fit: cover;
             border-radius: 8px;
             border: 2px solid #c0a97a;
+            position: relative;
+        }
+
+        .preview-item-container {
+            position: relative;
+            display: inline-block;
+            margin: 5px;
+        }
+
+        .preview-item-remove {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .preview-item-remove:hover {
+            background: #d32f2f;
+            transform: scale(1.1);
+        }
+
+        .file-upload-label.drag-over {
+            background: rgba(192, 169, 122, 0.2);
+            border-color: #c0a97a;
+            transform: scale(1.02);
         }
         .existing-media {
             margin-bottom: 20px;
@@ -388,33 +426,228 @@
     </div>
     
     <script>
+        // Store selected files for new images and videos
+        let selectedNewImages = [];
+        let selectedNewVideos = [];
+
         // Show loading overlay on form submission
         document.querySelector('form').addEventListener('submit', function(e) {
+            // Update file inputs with current selections
+            updateFileInputs();
             document.getElementById('loadingOverlay').classList.add('active');
         });
         
-        document.getElementById('newImages').addEventListener('change', function(e) {
+        // Function to update file inputs from stored arrays
+        function updateFileInputs() {
+            const imageInput = document.getElementById('newImages');
+            const videoInput = document.getElementById('newVideos');
+            
+            // Create new DataTransfer object for images
+            const imageDT = new DataTransfer();
+            selectedNewImages.forEach(file => imageDT.items.add(file));
+            imageInput.files = imageDT.files;
+            
+            // Create new DataTransfer object for videos
+            const videoDT = new DataTransfer();
+            selectedNewVideos.forEach(file => videoDT.items.add(file));
+            videoInput.files = videoDT.files;
+        }
+        
+        // Function to remove image from selection by filename
+        function removeNewImage(filename) {
+            selectedNewImages = selectedNewImages.filter(file => file.name !== filename);
+            updateImagePreview();
+            updateFileInputs();
+        }
+        
+        // Function to remove video from selection by filename
+        function removeNewVideo(filename) {
+            selectedNewVideos = selectedNewVideos.filter(file => file.name !== filename);
+            updateVideoPreview();
+            updateFileInputs();
+        }
+        
+        // Function to update image preview
+        function updateImagePreview() {
             const preview = document.getElementById('imagePreview');
             preview.innerHTML = '';
-            Array.from(e.target.files).forEach(file => {
+            selectedNewImages.forEach((file) => {
+                const container = document.createElement('div');
+                container.className = 'preview-item-container';
+                
                 const img = document.createElement('img');
                 img.src = URL.createObjectURL(file);
                 img.className = 'preview-item';
-                preview.appendChild(img);
+                
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'preview-item-remove';
+                removeBtn.innerHTML = '×';
+                removeBtn.type = 'button';
+                removeBtn.onclick = () => removeNewImage(file.name);
+                removeBtn.title = 'Remove ' + file.name;
+                
+                container.appendChild(img);
+                container.appendChild(removeBtn);
+                preview.appendChild(container);
             });
-        });
+        }
         
-        document.getElementById('newVideos').addEventListener('change', function(e) {
+        // Function to update video preview
+        function updateVideoPreview() {
             const preview = document.getElementById('videoPreview');
             preview.innerHTML = '';
-            Array.from(e.target.files).forEach(file => {
+            selectedNewVideos.forEach((file) => {
+                const container = document.createElement('div');
+                container.className = 'preview-item-container';
+                
                 const video = document.createElement('video');
                 video.src = URL.createObjectURL(file);
                 video.className = 'preview-item';
                 video.controls = true;
-                preview.appendChild(video);
+                
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'preview-item-remove';
+                removeBtn.innerHTML = '×';
+                removeBtn.type = 'button';
+                removeBtn.onclick = () => removeNewVideo(file.name);
+                removeBtn.title = 'Remove ' + file.name;
+                
+                container.appendChild(video);
+                container.appendChild(removeBtn);
+                preview.appendChild(container);
             });
+        }
+        
+        // Function to handle file selection (for both click and drop)
+        function handleNewImageFiles(files) {
+            Array.from(files).forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    // Check if file already exists (by name and size to avoid duplicates)
+                    const exists = selectedNewImages.some(existing => 
+                        existing.name === file.name && existing.size === file.size
+                    );
+                    if (!exists) {
+                        selectedNewImages.push(file);
+                    }
+                }
+            });
+            updateImagePreview();
+            updateFileInputs();
+        }
+        
+        function handleNewVideoFiles(files) {
+            Array.from(files).forEach(file => {
+                if (file.type.startsWith('video/')) {
+                    // Check if file already exists (by name and size to avoid duplicates)
+                    const exists = selectedNewVideos.some(existing => 
+                        existing.name === file.name && existing.size === file.size
+                    );
+                    if (!exists) {
+                        selectedNewVideos.push(file);
+                    }
+                }
+            });
+            updateVideoPreview();
+            updateFileInputs();
+        }
+        
+        // Image input change handler
+        document.getElementById('newImages').addEventListener('change', function(e) {
+            handleNewImageFiles(e.target.files);
         });
+        
+        // Video input change handler
+        document.getElementById('newVideos').addEventListener('change', function(e) {
+            handleNewVideoFiles(e.target.files);
+        });
+        
+        // Setup drag and drop for new images and videos
+        function setupNewMediaDragAndDrop() {
+            // Drag and drop for new images
+            const newImageUploadLabel = document.querySelector('label[for="newImages"]');
+            const newImageContainers = document.querySelectorAll('.file-upload-container');
+            let newImageContainer = null;
+            
+            for (let container of newImageContainers) {
+                if (container.querySelector('#newImages')) {
+                    newImageContainer = container;
+                    break;
+                }
+            }
+            
+            const newImageDropZone = newImageContainer || newImageUploadLabel;
+            if (newImageDropZone) {
+                setupDropZone(newImageDropZone, handleNewImageFiles, newImageUploadLabel);
+            }
+            
+            // Drag and drop for new videos
+            const newVideoUploadLabel = document.querySelector('label[for="newVideos"]');
+            const newVideoContainers = document.querySelectorAll('.file-upload-container');
+            let newVideoContainer = null;
+            
+            for (let container of newVideoContainers) {
+                if (container.querySelector('#newVideos')) {
+                    newVideoContainer = container;
+                    break;
+                }
+            }
+            
+            const newVideoDropZone = newVideoContainer || newVideoUploadLabel;
+            if (newVideoDropZone) {
+                setupDropZone(newVideoDropZone, handleNewVideoFiles, newVideoUploadLabel);
+            }
+        }
+        
+        // Generic drop zone setup function
+        function setupDropZone(element, fileHandler, labelElement) {
+            if (!element) return;
+            
+            element.addEventListener('dragenter', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (labelElement) {
+                    labelElement.classList.add('drag-over');
+                }
+            }, false);
+            
+            element.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.dataTransfer.dropEffect = 'copy';
+                if (labelElement) {
+                    labelElement.classList.add('drag-over');
+                }
+            }, false);
+            
+            element.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (!element.contains(e.relatedTarget)) {
+                    if (labelElement) {
+                        labelElement.classList.remove('drag-over');
+                    }
+                }
+            }, false);
+            
+            element.addEventListener('drop', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (labelElement) {
+                    labelElement.classList.remove('drag-over');
+                }
+                const files = e.dataTransfer.files;
+                if (files && files.length > 0) {
+                    fileHandler(files);
+                }
+            }, false);
+        }
+        
+        // Initialize drag and drop
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setupNewMediaDragAndDrop);
+        } else {
+            setupNewMediaDragAndDrop();
+        }
     </script>
 </body>
 </html>

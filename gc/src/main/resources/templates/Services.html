@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghoneim Captures - Our Services</title>
+    <link rel="icon" type="image/png" href="/images/Icon Black.png">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="../css/contact.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* Services Page Specific Styles */
+        body {
+            background: #ffffff;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            color: #333333;
+        }
+
+        /* Header */
+        .header {
+            background: #f8f9fa;
+            padding: 20px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 50px;
+            width: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover img {
+            transform: scale(1.05);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #000;
+            text-decoration: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            font-family: 'Poppins', sans-serif;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #9ca3af;
+        }
+
+        .contact-info {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .phone {
+            color: #000;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .contact-btn {
+            background: #9ca3af;
+            color: #000;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            transition: background 0.3s ease;
+        }
+
+        .contact-btn:hover {
+            background: #6b7280;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            position: relative;
+            height: 70vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), 
+                        url('../images/about.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 700;
+            margin: 0 0 20px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        /* Services Section */
+        .services-section {
+            padding: 80px 0;
+            background: #f8f9fa;
+        }
+
+        .services-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .services-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin: 0 0 20px 0;
+            color: #000;
+        }
+
+        .services-subtitle {
+            font-size: 1.1rem;
+            text-align: center;
+            color: #666;
+            margin: 0 0 60px 0;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .service-card {
+            background: #ffffff;
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e9ecef;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            color: #9ca3af;
+            margin-bottom: 20px;
+        }
+
+        .service-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 0 15px 0;
+            color: #000;
+        }
+
+        .service-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #555;
+            margin: 0 0 20px 0;
+        }
+
+        .service-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 25px 0;
+        }
+
+        .service-features li {
+            padding: 5px 0;
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .service-features li:before {
+            content: "✓";
+            color: #9ca3af;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .service-price {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #9ca3af;
+            margin: 0 0 20px 0;
+        }
+
+        .service-btn {
+            background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .service-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(192, 169, 122, 0.4);
+            background: linear-gradient(135deg, #6b7280 0%, #8b6f47 100%);
+        }
+
+        /* Process Section */
+        .process-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #e8d5b7 0%, #d4c4a8 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .process-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .process-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin: 0 0 20px 0;
+            color: #000;
+        }
+
+        .process-subtitle {
+            font-size: 1.1rem;
+            text-align: center;
+            color: #333;
+            margin: 0 0 60px 0;
+        }
+
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+
+        .process-step {
+            text-align: center;
+            position: relative;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: #9ca3af;
+            color: #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 auto 20px auto;
+        }
+
+        .step-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 0 0 15px 0;
+            color: #000;
+        }
+
+        .step-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+        }
+
+        /* Why Choose Us Section */
+        .why-choose-section {
+            padding: 80px 0;
+            background: #ffffff;
+        }
+
+        .why-choose-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .why-choose-text {
+            color: #000;
+        }
+
+        .why-choose-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0 0 20px 0;
+            color: #000;
+        }
+
+        .why-choose-description {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin: 0 0 30px 0;
+            color: #333;
+        }
+
+        .why-choose-features {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        .feature-item i {
+            color: #9ca3af;
+            font-size: 1.2rem;
+            width: 20px;
+        }
+
+        .why-choose-visual {
+            position: relative;
+            text-align: center;
+        }
+
+        .why-choose-placeholder {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 60px 40px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* Footer */
+        .footer {
+            background: #000;
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #9ca3af;
+        }
+
+        .footer-text {
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .logo img {
+                height: 40px;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 20px;
+            }
+
+            .contact-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .service-card {
+                padding: 30px 20px;
+            }
+
+            .process-steps {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .why-choose-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .why-choose-title {
+                font-size: 2rem;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .services-title,
+            .process-title,
+            .why-choose-title {
+                font-size: 2rem;
+            }
+
+            .service-card {
+                padding: 25px 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <a th:href="@{/landing/}" class="logo">
+                <img src="../images/Enclosed Horizontal Logo Black.png" alt="Ghoneim Captures" style="height: 40px; width: auto;">
+            </a>
+            
+            <nav>
+                <ul class="nav-links">
+                    <li><a th:href="@{/landing/projects}">PROJECTS</a></li>
+                    <li><a th:href="@{/landing/services}">SERVICES</a></li>
+                    <li><a th:href="@{/landing/about}">ABOUT</a></li>
+                    <li><a th:href="@{/landing/contact}">CONTACT US</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">OUR SERVICES</h1>
+            <p class="hero-subtitle">Professional Photography Solutions</p>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services-section">
+        <div class="services-container">
+            <h2 class="services-title">What We Offer</h2>
+            <p class="services-subtitle">Comprehensive photography services tailored to your needs</p>
+            
+            <div class="services-grid">
+                <!-- Portrait Photography -->
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h3 class="service-title">Portrait Photography</h3>
+                    <p class="service-description">
+                        Professional portrait sessions that capture your personality and style. Perfect for headshots, professional portraits, and personal branding.
+                    </p>
+                    <ul class="service-features">
+                        <li>Studio or outdoor sessions</li>
+                        <li>Professional lighting setup</li>
+                        <li>Multiple outfit changes</li>
+                        <li>High-resolution digital files</li>
+                        <li>Basic retouching included</li>
+                    </ul>
+
+                </div>
+
+                <!-- Event Photography -->
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3 class="service-title">Event Photography</h3>
+                    <p class="service-description">
+                        Capture the magic of your special events with our professional event photography services. From corporate events to private celebrations.
+                    </p>
+                    <ul class="service-features">
+                        <li>Full event coverage</li>
+                        <li>Professional equipment</li>
+                        <li>Same-day preview</li>
+                        <li>Online gallery delivery</li>
+                        <li>Unlimited downloads</li>
+                    </ul>
+                </div>
+
+                <!-- Commercial Photography -->
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h3 class="service-title">Commercial Photography</h3>
+                    <p class="service-description">
+                        High-quality commercial photography for businesses, products, and marketing materials. Professional results that enhance your brand.
+                    </p>
+                    <ul class="service-features">
+                        <li>Product photography</li>
+                        <li>Corporate headshots</li>
+                        <li>Marketing materials</li>
+                        <li>Brand photography</li>
+                        <li>Commercial licensing</li>
+                    </ul>
+                </div>
+
+                <!-- Photo Editing -->
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-paint-brush"></i>
+                    </div>
+                    <h3 class="service-title">Photo Editing</h3>
+                    <p class="service-description">
+                        Professional photo editing and retouching services to enhance your images. From basic adjustments to advanced retouching.
+                    </p>
+                    <ul class="service-features">
+                        <li>Color correction</li>
+                        <li>Skin retouching</li>
+                        <li>Background removal</li>
+                        <li>Creative effects</li>
+                        <li>Fast turnaround</li>
+                    </ul>
+                </div>
+
+                <!-- Wedding Photography -->
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3 class="service-title">Wedding Photography</h3>
+                    <p class="service-description">
+                        Capture your special day with our comprehensive wedding photography packages. From engagement sessions to the big day.
+                    </p>
+                    <ul class="service-features">
+                        <li>Full day coverage</li>
+                        <li>Engagement session</li>
+                        <li>Online gallery</li>
+                        <li>Print rights included</li>
+                        <li>Second photographer</li>
+                    </ul>
+                </div>
+
+                <!-- Fashion Photography -->
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <h3 class="service-title">Fashion Photography</h3>
+                    <p class="service-description">
+                        Professional fashion photography for models, designers, and fashion brands. High-end editorial and commercial fashion shoots.
+                    </p>
+                    <ul class="service-features">
+                        <li>Editorial shoots</li>
+                        <li>Fashion campaigns</li>
+                        <li>Model portfolios</li>
+                        <li>Styling consultation</li>
+                        <li>Professional makeup</li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <nav class="footer-links">
+                <a href="#photo-shoots">PHOTO SHOOTS</a>
+                <a href="#galleries">GALLERIES</a>
+                <a href="#about">ABOUT</a>
+                <a href="#resources">RESOURCES</a>
+                <a href="#workshops">WORKSHOPS</a>
+                <a href="#win">WIN</a>
+                <a href="#book">BOOK NOW</a>
+            </nav>
+            <p class="footer-text">
+                © 2024 Ghoneim Captures. All rights reserved. | Phone: 1300 288 818
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add scroll effect to header
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(248, 249, 250, 0.95)';
+                header.style.backdropFilter = 'blur(10px)';
+            } else {
+                header.style.background = '#f8f9fa';
+                header.style.backdropFilter = 'none';
+            }
+        });
+
+        // Service card hover effects
+        document.querySelectorAll('.service-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>

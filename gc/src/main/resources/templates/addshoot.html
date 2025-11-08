@@ -176,6 +176,44 @@
             object-fit: cover;
             border-radius: 8px;
             border: 2px solid #c0a97a;
+            position: relative;
+        }
+
+        .preview-item-container {
+            position: relative;
+            display: inline-block;
+            margin: 5px;
+        }
+
+        .preview-item-remove {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .preview-item-remove:hover {
+            background: #d32f2f;
+            transform: scale(1.1);
+        }
+
+        .file-upload-label.drag-over {
+            background: rgba(192, 169, 122, 0.2);
+            border-color: #c0a97a;
+            transform: scale(1.02);
         }
 
         .submit-button {
@@ -441,9 +479,16 @@
         let uploadStartTime = 0;
         let totalFiles = 0;
         let processedFiles = 0;
+        
+        // Store selected files for images and videos
+        let selectedImages = [];
+        let selectedVideos = [];
 
         // Show loading overlay on form submission with progress tracking
         document.querySelector('form').addEventListener('submit', function(e) {
+            // Update file inputs with current selections
+            updateFileInputs();
+            
             const imageFiles = document.getElementById('images').files;
             const videoFiles = document.getElementById('videos').files;
             totalFiles = imageFiles.length + videoFiles.length;
@@ -461,6 +506,120 @@
             // Simulate progress updates (in real implementation, this would be server-sent events)
             simulateProgress();
         });
+        
+        // Function to update file inputs from stored arrays
+        function updateFileInputs() {
+            const imageInput = document.getElementById('images');
+            const videoInput = document.getElementById('videos');
+            
+            // Create new DataTransfer object for images
+            const imageDT = new DataTransfer();
+            selectedImages.forEach(file => imageDT.items.add(file));
+            imageInput.files = imageDT.files;
+            
+            // Create new DataTransfer object for videos
+            const videoDT = new DataTransfer();
+            selectedVideos.forEach(file => videoDT.items.add(file));
+            videoInput.files = videoDT.files;
+        }
+        
+        // Function to remove image from selection by filename
+        function removeImage(filename) {
+            selectedImages = selectedImages.filter(file => file.name !== filename);
+            updateImagePreview();
+            updateFileInputs();
+        }
+        
+        // Function to remove video from selection by filename
+        function removeVideo(filename) {
+            selectedVideos = selectedVideos.filter(file => file.name !== filename);
+            updateVideoPreview();
+            updateFileInputs();
+        }
+        
+        // Function to update image preview
+        function updateImagePreview() {
+            const preview = document.getElementById('imagePreview');
+            preview.innerHTML = '';
+            selectedImages.forEach((file) => {
+                const container = document.createElement('div');
+                container.className = 'preview-item-container';
+                
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.className = 'preview-item';
+                
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'preview-item-remove';
+                removeBtn.innerHTML = '×';
+                removeBtn.type = 'button';
+                removeBtn.onclick = () => removeImage(file.name);
+                removeBtn.title = 'Remove ' + file.name;
+                
+                container.appendChild(img);
+                container.appendChild(removeBtn);
+                preview.appendChild(container);
+            });
+        }
+        
+        // Function to update video preview
+        function updateVideoPreview() {
+            const preview = document.getElementById('videoPreview');
+            preview.innerHTML = '';
+            selectedVideos.forEach((file) => {
+                const container = document.createElement('div');
+                container.className = 'preview-item-container';
+                
+                const video = document.createElement('video');
+                video.src = URL.createObjectURL(file);
+                video.className = 'preview-item';
+                video.controls = true;
+                
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'preview-item-remove';
+                removeBtn.innerHTML = '×';
+                removeBtn.type = 'button';
+                removeBtn.onclick = () => removeVideo(file.name);
+                removeBtn.title = 'Remove ' + file.name;
+                
+                container.appendChild(video);
+                container.appendChild(removeBtn);
+                preview.appendChild(container);
+            });
+        }
+        
+        // Function to handle file selection (for both click and drop)
+        function handleImageFiles(files) {
+            Array.from(files).forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    // Check if file already exists (by name and size to avoid duplicates)
+                    const exists = selectedImages.some(existing => 
+                        existing.name === file.name && existing.size === file.size
+                    );
+                    if (!exists) {
+                        selectedImages.push(file);
+                    }
+                }
+            });
+            updateImagePreview();
+            updateFileInputs();
+        }
+        
+        function handleVideoFiles(files) {
+            Array.from(files).forEach(file => {
+                if (file.type.startsWith('video/')) {
+                    // Check if file already exists (by name and size to avoid duplicates)
+                    const exists = selectedVideos.some(existing => 
+                        existing.name === file.name && existing.size === file.size
+                    );
+                    if (!exists) {
+                        selectedVideos.push(file);
+                    }
+                }
+            });
+            updateVideoPreview();
+            updateFileInputs();
+        }
 
         function validateFileSizes(imageFiles, videoFiles) {
             const maxSize = 500 * 1024 * 1024; // 500MB
@@ -542,30 +701,151 @@
             }, 200);
         }
         
-        // Image preview
-        document.getElementById('images').addEventListener('change', function(e) {
-            const preview = document.getElementById('imagePreview');
-            preview.innerHTML = '';
-            Array.from(e.target.files).forEach(file => {
-                const img = document.createElement('img');
-                img.src = URL.createObjectURL(file);
-                img.className = 'preview-item';
-                preview.appendChild(img);
-            });
-        });
+        // Prevent default drag behaviors
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }
+
+        // Setup drag and drop functionality
+        function setupDragAndDrop() {
+            // Image input change handler
+            const imageInput = document.getElementById('images');
+            if (imageInput) {
+                imageInput.addEventListener('change', function(e) {
+                    handleImageFiles(e.target.files);
+                });
+            }
+            
+            // Video input change handler
+            const videoInput = document.getElementById('videos');
+            if (videoInput) {
+                videoInput.addEventListener('change', function(e) {
+                    handleVideoFiles(e.target.files);
+                });
+            }
+            
+            // Drag and drop for images
+            const imageInput = document.getElementById('images');
+            const imageUploadLabel = document.querySelector('label[for="images"]');
+            
+            // Find the file-upload-container that contains the image input
+            const imageUploadContainers = document.querySelectorAll('.file-upload-container');
+            let imageUploadContainer = null;
+            
+            for (let container of imageUploadContainers) {
+                if (container.querySelector('#images')) {
+                    imageUploadContainer = container;
+                    break;
+                }
+            }
+            
+            // Setup drop zone - prefer container, fallback to label
+            const imageDropZone = imageUploadContainer || imageUploadLabel;
+            if (imageDropZone) {
+                setupDropZone(imageDropZone, handleImageFiles, imageUploadLabel);
+                console.log('Image drop zone setup:', imageDropZone);
+            }
+            
+            // Drag and drop for videos
+            const videoInput = document.getElementById('videos');
+            const videoUploadLabel = document.querySelector('label[for="videos"]');
+            
+            // Find the file-upload-container that contains the video input
+            const videoUploadContainers = document.querySelectorAll('.file-upload-container');
+            let videoUploadContainer = null;
+            
+            for (let container of videoUploadContainers) {
+                if (container.querySelector('#videos')) {
+                    videoUploadContainer = container;
+                    break;
+                }
+            }
+            
+            // Setup drop zone - prefer container, fallback to label
+            const videoDropZone = videoUploadContainer || videoUploadLabel;
+            if (videoDropZone) {
+                setupDropZone(videoDropZone, handleVideoFiles, videoUploadLabel);
+                console.log('Video drop zone setup:', videoDropZone);
+            }
+        }
         
-        // Video preview
-        document.getElementById('videos').addEventListener('change', function(e) {
-            const preview = document.getElementById('videoPreview');
-            preview.innerHTML = '';
-            Array.from(e.target.files).forEach(file => {
-                const video = document.createElement('video');
-                video.src = URL.createObjectURL(file);
-                video.className = 'preview-item';
-                video.controls = true;
-                preview.appendChild(video);
-            });
-        });
+        // Generic function to setup drop zone
+        function setupDropZone(element, fileHandler, labelElement) {
+            if (!element) {
+                console.error('Drop zone element not found');
+                return;
+            }
+            
+            console.log('Setting up drop zone on:', element);
+            
+            // Prevent default drag behaviors on all drag events
+            element.addEventListener('dragenter', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (labelElement) {
+                    labelElement.classList.add('drag-over');
+                } else {
+                    element.classList.add('drag-over');
+                }
+            }, false);
+            
+            element.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                // Set dropEffect to indicate this is a valid drop target
+                e.dataTransfer.dropEffect = 'copy';
+                if (labelElement) {
+                    labelElement.classList.add('drag-over');
+                } else {
+                    element.classList.add('drag-over');
+                }
+            }, false);
+            
+            element.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                // Check if we're actually leaving the element
+                if (!element.contains(e.relatedTarget)) {
+                    if (labelElement) {
+                        labelElement.classList.remove('drag-over');
+                    } else {
+                        element.classList.remove('drag-over');
+                    }
+                }
+            }, false);
+            
+            element.addEventListener('drop', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Drop event fired on:', element);
+                
+                if (labelElement) {
+                    labelElement.classList.remove('drag-over');
+                } else {
+                    element.classList.remove('drag-over');
+                }
+                
+                const files = e.dataTransfer.files;
+                console.log('Files in dataTransfer:', files ? files.length : 0);
+                
+                if (files && files.length > 0) {
+                    console.log('Processing', files.length, 'files');
+                    fileHandler(files);
+                } else {
+                    console.warn('No files found in drop event');
+                }
+            }, false);
+        }
+        
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setupDragAndDrop);
+        } else {
+            // DOM is already ready
+            setupDragAndDrop();
+        }
     </script>
 </body>
 </html>

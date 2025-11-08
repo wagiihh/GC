@@ -19,8 +19,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import ghoneimcaptures.gc.Model.Category;
+import jakarta.servlet.http.HttpSession;
 import ghoneimcaptures.gc.Model.Image;
 import ghoneimcaptures.gc.Model.Shoot;
 import ghoneimcaptures.gc.Model.Video;
@@ -55,9 +57,23 @@ public class ShootController {
     @Value("${aws.cloudfront.domain}")
     private String cloudFrontDomain;
 
+    // Helper method to check if user is logged in
+    private boolean isLoggedIn(HttpSession session) {
+        return session != null && session.getAttribute("email") != null;
+    }
+
+    // Helper method to redirect if not logged in
+    private RedirectView redirectToLogin() {
+        return new RedirectView("/GC/Login");
+    }
+
     // List all shoots
     @GetMapping
-    public String listShoots(Model model) {
+    public Object listShoots(Model model, HttpSession session) {
+        // Check if user is logged in
+        if (!isLoggedIn(session)) {
+            return redirectToLogin();
+        }
         List<Shoot> shoots = shootRepository.findAll();
         model.addAttribute("shoots", shoots);
         return "manageshoots";
@@ -65,7 +81,11 @@ public class ShootController {
 
     // Show add shoot form
     @GetMapping("/add")
-    public String showAddShootForm(Model model) {
+    public Object showAddShootForm(Model model, HttpSession session) {
+        // Check if user is logged in
+        if (!isLoggedIn(session)) {
+            return redirectToLogin();
+        }
         model.addAttribute("shoot", new Shoot());
         List<Category> categories = categoryRepository.findAll();
         model.addAttribute("categories", categories);
@@ -238,7 +258,11 @@ public class ShootController {
 
     // Show edit shoot form
     @GetMapping("/edit/{id}")
-    public String showEditShootForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+    public Object showEditShootForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes, HttpSession session) {
+        // Check if user is logged in
+        if (!isLoggedIn(session)) {
+            return redirectToLogin();
+        }
         Shoot shoot = shootRepository.findById(id).orElse(null);
         if (shoot == null) {
             redirectAttributes.addFlashAttribute("error", "Shoot not found!");

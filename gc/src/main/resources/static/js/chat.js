@@ -77,6 +77,8 @@ class ChatManager {
         this.showTypingIndicator();
         
         try {
+            console.log('Sending message to API:', message);
+            
             // Send to ChatGPT API
             const response = await fetch('/api/chat', {
                 method: 'POST',
@@ -89,7 +91,11 @@ class ChatManager {
                 })
             });
             
+            console.log('Response status:', response.status);
+            console.log('Response ok:', response.ok);
+            
             const data = await response.json();
+            console.log('Response data:', data);
             
             // Remove typing indicator
             this.removeTypingIndicator();
@@ -98,7 +104,7 @@ class ChatManager {
             this.addMessage(data.response, 'assistant');
             
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Error calling API:', error);
             this.removeTypingIndicator();
             this.addMessage('Sorry, I encountered an error. Please try again.', 'assistant');
         }

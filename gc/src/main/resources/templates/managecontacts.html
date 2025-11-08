@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghoneim Captures - Manage Contact Inquiries</title>
+    <link rel="icon" type="image/png" href="/images/Icon Black.png">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="../css/contact.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* Manage Contacts Page Specific Styles */
+        body {
+            background: linear-gradient(135deg, #222222 0%, #000000 100%);
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Background Pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(192, 169, 122, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(192, 169, 122, 0.05) 0%, transparent 50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .page-header {
+            background: rgba(34, 34, 34, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(192, 169, 122, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .page-title {
+            color: #c0a97a;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .page-subtitle {
+            color: #ffffff;
+            font-size: 1.1rem;
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #c0a97a 0%, #a68b5b 100%);
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(192, 169, 122, 0.3);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(192, 169, 122, 0.4);
+            color: #000;
+            text-decoration: none;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: rgba(34, 34, 34, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(192, 169, 122, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .filter-title {
+            color: #c0a97a;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-label {
+            color: #ffffff;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-select,
+        .filter-input {
+            padding: 10px 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(192, 169, 122, 0.3);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+
+        .filter-select:focus,
+        .filter-input:focus {
+            outline: none;
+            border-color: #c0a97a;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .filter-select option {
+            background: #222222;
+            color: #ffffff;
+        }
+
+        .filter-btn {
+            background: linear-gradient(135deg, #c0a97a 0%, #a68b5b 100%);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(192, 169, 122, 0.4);
+        }
+
+        .filter-btn.clear {
+            background: rgba(158, 158, 158, 0.2);
+            color: #ffffff;
+        }
+
+        .filter-btn.clear:hover {
+            background: rgba(158, 158, 158, 0.3);
+        }
+
+        /* Contacts Table */
+        .contacts-table-container {
+            background: rgba(34, 34, 34, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(192, 169, 122, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            overflow-x: auto;
+        }
+
+        .table-title {
+            color: #c0a97a;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .contacts-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .contacts-table th,
+        .contacts-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(192, 169, 122, 0.2);
+        }
+
+        .contacts-table th {
+            background: rgba(192, 169, 122, 0.1);
+            color: #c0a97a;
+            font-weight: 600;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .contacts-table td {
+            color: #ffffff;
+            font-size: 0.95rem;
+        }
+
+        .contacts-table tr:hover {
+            background: rgba(192, 169, 122, 0.05);
+        }
+
+        /* Inquiry Message Badge */
+        .inquiry-badge {
+            background: rgba(192, 169, 122, 0.2);
+            color: #c0a97a;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .inquiry-badge:hover {
+            background: rgba(192, 169, 122, 0.3);
+        }
+
+        /* Status Badge */
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-new {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+            border: 1px solid #4caf50;
+        }
+
+        .status-contacted {
+            background: rgba(33, 150, 243, 0.2);
+            color: #2196f3;
+            border: 1px solid #2196f3;
+        }
+
+        .status-archived {
+            background: rgba(158, 158, 158, 0.2);
+            color: #9e9e9e;
+            border: 1px solid #9e9e9e;
+        }
+
+        /* Action buttons in table */
+        .table-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .btn-view {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-view:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+        .btn-mark {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-mark:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-delete:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: rgba(34, 34, 34, 0.98);
+            margin: 5% auto;
+            padding: 30px;
+            border: 1px solid rgba(192, 169, 122, 0.3);
+            border-radius: 15px;
+            width: 80%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(192, 169, 122, 0.2);
+        }
+
+        .modal-title {
+            color: #c0a97a;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .close {
+            color: #9e9e9e;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: #ffffff;
+        }
+
+        .modal-body {
+            color: #ffffff;
+        }
+
+        .modal-field {
+            margin-bottom: 15px;
+        }
+
+        .modal-label {
+            color: #c0a97a;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-value {
+            color: #ffffff;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            border: 1px solid rgba(192, 169, 122, 0.2);
+        }
+
+        .modal-value.inquiry {
+            background: rgba(192, 169, 122, 0.1);
+            border-color: rgba(192, 169, 122, 0.3);
+            padding: 15px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        /* Back to Dashboard */
+        .back-to-dashboard {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .back-to-dashboard a {
+            color: #c0a97a;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 25px;
+            border: 2px solid #c0a97a;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .back-to-dashboard a:hover {
+            background: #c0a97a;
+            color: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(192, 169, 122, 0.3);
+        }
+
+        /* No contacts message */
+        .no-contacts {
+            text-align: center;
+            color: #ffffff;
+            font-size: 1.2rem;
+            padding: 40px;
+            opacity: 0.8;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 15px;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .contacts-table {
+                font-size: 0.9rem;
+            }
+
+            .contacts-table th,
+            .contacts-table td {
+                padding: 10px 8px;
+            }
+
+            .table-actions {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-envelope"></i>
+                Contact Inquiries
+            </h1>
+            <p class="page-subtitle">View and manage inquiries from potential clients</p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a th:href="@{/GC/HomePage}" class="action-btn">
+                <i class="fas fa-home"></i>
+                Back to Dashboard
+            </a>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <h3 class="filter-title">
+                <i class="fas fa-filter"></i>
+                Filter Inquiries
+            </h3>
+            <form method="get" action="/GC/managecontacts" class="filter-controls">
+                <div class="filter-group">
+                    <label class="filter-label" for="statusFilter">Status</label>
+                    <select name="status" id="statusFilter" class="filter-select">
+                        <option value="">All Statuses</option>
+                        <option value="NEW" th:selected="${status == 'NEW'}">New</option>
+                        <option value="CONTACTED" th:selected="${status == 'CONTACTED'}">Contacted</option>
+                        <option value="ARCHIVED" th:selected="${status == 'ARCHIVED'}">Archived</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label" for="dateFilter">Date</label>
+                    <select name="dateFilter" id="dateFilter" class="filter-select">
+                        <option value="">All Dates</option>
+                        <option value="today" th:selected="${dateFilter == 'today'}">Today</option>
+                        <option value="week" th:selected="${dateFilter == 'week'}">This Week</option>
+                        <option value="month" th:selected="${dateFilter == 'month'}">This Month</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label" for="sortBy">Sort By</label>
+                    <select name="sortBy" id="sortBy" class="filter-select">
+                        <option value="date_desc" th:selected="${sortBy == 'date_desc'}">Newest First</option>
+                        <option value="date_asc" th:selected="${sortBy == 'date_asc'}">Oldest First</option>
+                        <option value="name_asc" th:selected="${sortBy == 'name_asc'}">Name A-Z</option>
+                        <option value="name_desc" th:selected="${sortBy == 'name_desc'}">Name Z-A</option>
+                    </select>
+                </div>
+                <div class="filter-group" style="align-self: flex-end;">
+                    <button type="submit" class="filter-btn">
+                        <i class="fas fa-search"></i>
+                        Apply Filters
+                    </button>
+                </div>
+                <div class="filter-group" style="align-self: flex-end;">
+                    <a th:href="@{/GC/managecontacts}" class="filter-btn clear">
+                        <i class="fas fa-times"></i>
+                        Clear
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Contacts Table -->
+        <div class="contacts-table-container">
+            <h2 class="table-title">
+                <i class="fas fa-list"></i>
+                All Inquiries
+            </h2>
+            
+            <div th:if="${contacts != null and !contacts.empty}">
+                <table class="contacts-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Instagram</th>
+                            <th>Inquiry</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="contact : ${contacts}">
+                            <td th:text="${contact.id}"></td>
+                            <td th:text="${contact.firstName + ' ' + contact.lastName}"></td>
+                            <td th:text="${contact.email}"></td>
+                            <td th:text="${contact.phone}"></td>
+                            <td>
+                                <a th:if="${contact.instagram != null and !contact.instagram.isEmpty()}" 
+                                   th:href="${'https://instagram.com/' + contact.instagram}" 
+                                   target="_blank"
+                                   style="color: #c0a97a; text-decoration: none;">
+                                    <i class="fab fa-instagram"></i> <span th:text="${contact.instagram}"></span>
+                                </a>
+                                <span th:if="${contact.instagram == null or contact.instagram.isEmpty()}" 
+                                      style="color: #9e9e9e;">N/A</span>
+                            </td>
+                            <td>
+                                <span th:if="${contact.inquiryMessage != null and !contact.inquiryMessage.isEmpty()}" 
+                                      class="inquiry-badge">
+                                    <i class="fas fa-comment"></i> View
+                                </span>
+                                <span th:if="${contact.inquiryMessage == null or contact.inquiryMessage.isEmpty()}" 
+                                      style="color: #9e9e9e;">No message</span>
+                            </td>
+                            <td>
+                                <span th:if="${contact.status == 'NEW'}" class="status-badge status-new">New</span>
+                                <span th:if="${contact.status == 'CONTACTED'}" class="status-badge status-contacted">Contacted</span>
+                                <span th:if="${contact.status == 'ARCHIVED'}" class="status-badge status-archived">Archived</span>
+                            </td>
+                            <td th:text="${#temporals.format(contact.submittedAt, 'MMM dd, yyyy')}"></td>
+                            <td>
+                                <div class="table-actions">
+                                    <button class="btn-view">
+                                        <i class="fas fa-eye"></i>
+                                        View
+                                    </button>
+                                    <a th:if="${contact.status != 'CONTACTED'}" 
+                                       th:href="@{/GC/contact/mark-contacted/{id}(id=${contact.id})}" 
+                                       class="btn-mark">
+                                        <i class="fas fa-check"></i>
+                                        Mark Contacted
+                                    </a>
+                                    <a th:href="@{/GC/contact/delete/{id}(id=${contact.id})}" 
+                                       class="btn-delete"
+                                       onclick="return confirm('Are you sure you want to delete this inquiry?')">
+                                        <i class="fas fa-trash"></i>
+                                        Delete
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div th:if="${contacts == null or contacts.empty}" class="no-contacts">
+                <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 20px; opacity: 0.5;"></i>
+                <p>No contact inquiries found.</p>
+            </div>
+        </div>
+
+        <!-- Back to Dashboard -->
+        <div class="back-to-dashboard">
+            <a th:href="@{/GC/HomePage}">
+                <i class="fas fa-arrow-left"></i>
+                Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Modal for viewing contact details -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Contact Details</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        // Get contact data from Thymeleaf using proper JSON serialization
+        /*[# th:if="${contacts != null and !contacts.empty}"]*/
+        const contacts = /*[[${contacts}]]*/ [];
+        /*[/]*/
+        /*[# th:if="${contacts == null or contacts.empty}"]*/
+        const contacts = [];
+        /*[/]*/
+        
+        // Debug: log all contacts to see structure
+        console.log('All contacts:', contacts);
+        console.log('Contacts count:', contacts.length);
+        if (contacts.length > 0) {
+            console.log('First contact keys:', Object.keys(contacts[0]));
+            console.log('First contact:', contacts[0]);
+        }
+        
+        // Helper function to escape HTML
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function viewContact(id) {
+            console.log('Viewing contact with ID:', id);
+            console.log('Total contacts:', contacts.length);
+            
+            const contact = contacts.find(c => c.id === id);
+            console.log('Found contact:', contact);
+            
+            if (!contact) {
+                console.error('Contact not found with ID:', id);
+                return;
+            }
+            
+            // Debug: log the contact object to see its structure
+            console.log('Contact object:', contact);
+            console.log('Contact keys:', Object.keys(contact));
+            console.log('Inquiry message keys:', Object.keys(contact).filter(k => k.toLowerCase().includes('inquiry')));
+            
+            // Try to get inquiry message with all possible variations
+            const inquiryMessage = contact.inquiryMessage || 
+                                  contact.inquiry_message || 
+                                  contact['inquiryMessage'] || 
+                                  contact['inquiry_message'] ||
+                                  '';
+            
+            console.log('Inquiry message value:', inquiryMessage);
+            
+            const modalBody = document.getElementById('modalBody');
+            
+            modalBody.innerHTML = `
+                <div class="modal-field">
+                    <span class="modal-label">Name</span>
+                    <div class="modal-value">${escapeHtml(contact.firstName || '')} ${escapeHtml(contact.lastName || '')}</div>
+                </div>
+                <div class="modal-field">
+                    <span class="modal-label">Email</span>
+                    <div class="modal-value">${escapeHtml(contact.email || '')}</div>
+                </div>
+                <div class="modal-field">
+                    <span class="modal-label">Phone</span>
+                    <div class="modal-value">${escapeHtml(contact.phone || '')}</div>
+                </div>
+                ${contact.instagram ? `
+                <div class="modal-field">
+                    <span class="modal-label">Instagram</span>
+                    <div class="modal-value">
+                        <a href="https://instagram.com/${escapeHtml(contact.instagram)}" target="_blank" style="color: #c0a97a;">
+                            <i class="fab fa-instagram"></i> ${escapeHtml(contact.instagram)}
+                        </a>
+                    </div>
+                </div>
+                ` : ''}
+                ${inquiryMessage ? `
+                <div class="modal-field">
+                    <span class="modal-label">Inquiry Message</span>
+                    <div class="modal-value inquiry">${escapeHtml(inquiryMessage)}</div>
+                </div>
+                ` : ''}
+                <div class="modal-field">
+                    <span class="modal-label">Status</span>
+                    <div class="modal-value">
+                        <span class="status-badge ${contact.status === 'NEW' ? 'status-new' : contact.status === 'CONTACTED' ? 'status-contacted' : 'status-archived'}">
+                            ${escapeHtml(contact.status || '')}
+                        </span>
+                    </div>
+                </div>
+                <div class="modal-field">
+                    <span class="modal-label">Submitted At</span>
+                    <div class="modal-value">${contact.submittedAt ? new Date(contact.submittedAt).toLocaleString() : 'N/A'}</div>
+                </div>
+            `;
+            
+            document.getElementById('contactModal').style.display = 'block';
+        }
+        
+        function viewInquiry(id) {
+            viewContact(id);
+        }
+        
+        function closeModal() {
+            document.getElementById('contactModal').style.display = 'none';
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('contactModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+        
+        // Add some interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded - Contacts array:', contacts);
+            console.log('Contacts count:', contacts.length);
+            console.log('Contacts type:', typeof contacts);
+            console.log('Is array:', Array.isArray(contacts));
+            
+            // Log the first few contacts to see structure
+            if (contacts.length > 0) {
+                console.log('First contact:', contacts[0]);
+                console.log('First contact keys:', Object.keys(contacts[0]));
+            } else {
+                console.error('Contacts array is empty!');
+            }
+            
+            // Test viewContact function globally
+            window.viewContact = function(id) {
+                console.log('viewContact called with ID:', id, 'Type:', typeof id);
+                console.log('Contacts array:', contacts);
+                
+                // Log all contact IDs for debugging
+                console.log('All contact IDs:', contacts.map(c => ({ id: c.id, type: typeof c.id })));
+                
+                // Try to find contact with type conversion
+                let contact = contacts.find(c => c.id === id);
+                if (!contact) {
+                    // Try with type conversion
+                    contact = contacts.find(c => c.id == id);
+                }
+                if (!contact) {
+                    // Try with toString comparison
+                    contact = contacts.find(c => String(c.id) === String(id));
+                }
+                
+                console.log('Found contact:', contact);
+                
+                if (!contact) {
+                    console.error('Contact not found with ID:', id);
+                    console.log('Available IDs:', contacts.map(c => c.id));
+                    alert('Contact not found with ID: ' + id);
+                    return;
+                }
+                
+                console.log('Contact object:', contact);
+                console.log('Contact keys:', Object.keys(contact));
+                
+                // Try to get inquiry message with all possible variations
+                const inquiryMessage = contact.inquiryMessage || 
+                                      contact.inquiry_message || 
+                                      contact['inquiryMessage'] || 
+                                      contact['inquiry_message'] ||
+                                      '';
+                
+                console.log('Inquiry message value:', inquiryMessage);
+                
+                const modalBody = document.getElementById('modalBody');
+                
+                modalBody.innerHTML = `
+                    <div class="modal-field">
+                        <span class="modal-label">Name</span>
+                        <div class="modal-value">${escapeHtml(contact.firstName || '')} ${escapeHtml(contact.lastName || '')}</div>
+                    </div>
+                    <div class="modal-field">
+                        <span class="modal-label">Email</span>
+                        <div class="modal-value">${escapeHtml(contact.email || '')}</div>
+                    </div>
+                    <div class="modal-field">
+                        <span class="modal-label">Phone</span>
+                        <div class="modal-value">${escapeHtml(contact.phone || '')}</div>
+                    </div>
+                    ${contact.instagram ? `
+                    <div class="modal-field">
+                        <span class="modal-label">Instagram</span>
+                        <div class="modal-value">
+                            <a href="https://instagram.com/${escapeHtml(contact.instagram)}" target="_blank" style="color: #c0a97a;">
+                                <i class="fab fa-instagram"></i> ${escapeHtml(contact.instagram)}
+                            </a>
+                        </div>
+                    </div>
+                    ` : ''}
+                    ${inquiryMessage ? `
+                    <div class="modal-field">
+                        <span class="modal-label">Inquiry Message</span>
+                        <div class="modal-value inquiry">${escapeHtml(inquiryMessage)}</div>
+                    </div>
+                    ` : ''}
+                    <div class="modal-field">
+                        <span class="modal-label">Status</span>
+                        <div class="modal-value">
+                            <span class="status-badge ${contact.status === 'NEW' ? 'status-new' : contact.status === 'CONTACTED' ? 'status-contacted' : 'status-archived'}">
+                                ${escapeHtml(contact.status || '')}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="modal-field">
+                        <span class="modal-label">Submitted At</span>
+                        <div class="modal-value">${contact.submittedAt ? new Date(contact.submittedAt).toLocaleString() : 'N/A'}</div>
+                    </div>
+                `;
+                
+                document.getElementById('contactModal').style.display = 'block';
+            };
+            
+            // Add event delegation for view buttons
+            document.addEventListener('click', function(e) {
+                console.log('Click detected on:', e.target);
+                
+                if (e.target.closest('.btn-view')) {
+                    const button = e.target.closest('.btn-view');
+                    const row = button.closest('tr');
+                    const contactIdCell = row.querySelector('td:first-child');
+                    const contactId = parseInt(contactIdCell.textContent.trim());
+                    console.log('View button clicked - Contact ID:', contactId);
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.viewContact(contactId);
+                }
+                
+                if (e.target.closest('.inquiry-badge')) {
+                    const badge = e.target.closest('.inquiry-badge');
+                    const row = badge.closest('tr');
+                    const contactIdCell = row.querySelector('td:first-child');
+                    const contactId = parseInt(contactIdCell.textContent.trim());
+                    console.log('Inquiry badge clicked - Contact ID:', contactId);
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.viewContact(contactId);
+                }
+            });
+            
+            const tableRows = document.querySelectorAll('.contacts-table tbody tr');
+            tableRows.forEach(row => {
+                row.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.01)';
+                    this.style.transition = 'transform 0.2s ease';
+                });
+                
+                row.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+

@@ -21,6 +21,22 @@
             margin: 0;
             padding: 0;
             min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Background Pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(192, 169, 122, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(192, 169, 122, 0.05) 0%, transparent 50%);
+            z-index: -1;
+            pointer-events: none;
         }
 
         .admin-container {
@@ -135,6 +151,13 @@
         .dashboard-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            border-color: rgba(192, 169, 122, 0.5);
+        }
+        
+        a:hover .dashboard-card {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            border-color: rgba(192, 169, 122, 0.5);
         }
 
         .card-header {
@@ -355,11 +378,12 @@
             </div>
             
             <ul class="admin-nav-links">
+                <li><a th:href="@{/landing/}"><i class="fas fa-home"></i> Website</a></li>
                 <li><a th:href="@{/GC/manageusers}"><i class="fas fa-users-cog"></i> Manage Users</a></li>
                 <li><a th:href="@{/GC/managecategories}"><i class="fas fa-folder-open"></i> Manage Categories</a></li>
                 <li><a th:href="@{/admin/shoots}"><i class="fas fa-camera"></i> Manage Shoots</a></li>
-                <li><a th:href="@{/landing/}"><i class="fas fa-home"></i> Website</a></li>
-                <li><a th:href="@{/GC/logout}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                <li><a th:href="@{/GC/managecontacts}"><i class="fas fa-envelope"></i> Contact Inquiries</a></li>
+                <!-- <li><a th:href="@{/GC/logout}"><i class="fas fa-sign-out-alt"></i> Logout</a></li> -->
             </ul>
         </nav>
         
@@ -372,162 +396,88 @@
     <div class="admin-container">
         <!-- Dashboard Stats -->
         <div class="dashboard-grid">
-            <div class="dashboard-card">
-                <div class="card-header">
-                    <div class="card-icon">
-                        <i class="fas fa-users"></i>
+            <a th:href="@{/GC/manageusers}" style="text-decoration: none; color: inherit;">
+                <div class="dashboard-card" style="cursor: pointer;">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3 class="card-title">Total Users</h3>
                     </div>
-                    <h3 class="card-title">Total Users</h3>
-                </div>
-                <div class="card-content">
-                    Manage your client base and user accounts
-                </div>
-                <div class="card-stats">
-                    <span class="stat-number">248</span>
-                    <span class="stat-label">Active Users</span>
-                </div>
-            </div>
-
-            <div class="dashboard-card">
-                <div class="card-header">
-                    <div class="card-icon">
-                        <i class="fas fa-camera"></i>
+                    <div class="card-content">
+                        Manage your client base and user accounts
                     </div>
-                    <h3 class="card-title">Photo Shoots</h3>
-                </div>
-                <div class="card-content">
-                    Track all your photography sessions
-                </div>
-                <div class="card-stats">
-                    <span class="stat-number">156</span>
-                    <span class="stat-label">Completed</span>
-                </div>
-            </div>
-
-            <div class="dashboard-card">
-                <div class="card-header">
-                    <div class="card-icon">
-                        <i class="fas fa-folder"></i>
+                    <div class="card-stats">
+                        <span class="stat-number" th:text="${totalUsers}">0</span>
+                        <span class="stat-label">Active Users</span>
                     </div>
-                    <h3 class="card-title">Categories</h3>
                 </div>
-                <div class="card-content">
-                    Organize your photo collections
-                </div>
-                <div class="card-stats">
-                    <span class="stat-number">12</span>
-                    <span class="stat-label">Categories</span>
-                </div>
-            </div>
-
-            <div class="dashboard-card">
-                <div class="card-header">
-                    <div class="card-icon">
-                        <i class="fas fa-calendar"></i>
-                    </div>
-                    <h3 class="card-title">Upcoming Shoots</h3>
-                </div>
-                <div class="card-content">
-                    Your scheduled photography sessions
-                </div>
-                <div class="card-stats">
-                    <span class="stat-number">8</span>
-                    <span class="stat-label">This Week</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="quick-actions">
-            <a th:href="@{/admin/addUsers}" class="action-btn">
-                <i class="fas fa-user-plus"></i>
-                Add New User
             </a>
-            <a th:href="@{/admin/addShoots}" class="action-btn">
-                <i class="fas fa-camera"></i>
-                Schedule Shoot
+
+            <a th:href="@{/admin/shoots}" style="text-decoration: none; color: inherit;">
+                <div class="dashboard-card" style="cursor: pointer;">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                        <h3 class="card-title">Photo Shoots</h3>
+                    </div>
+                    <div class="card-content">
+                        Track all your photography sessions
+                    </div>
+                    <div class="card-stats">
+                        <span class="stat-number" th:text="${totalShoots}">0</span>
+                        <span class="stat-label">Total Shoots</span>
+                    </div>
+                </div>
             </a>
-            <a th:href="@{/admin/addCategories}" class="action-btn">
-                <i class="fas fa-folder-plus"></i>
-                Create Category
+
+            <a th:href="@{/GC/managecategories}" style="text-decoration: none; color: inherit;">
+                <div class="dashboard-card" style="cursor: pointer;">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-folder"></i>
+                        </div>
+                        <h3 class="card-title">Categories</h3>
+                    </div>
+                    <div class="card-content">
+                        Organize your photo collections
+                    </div>
+                    <div class="card-stats">
+                        <span class="stat-number" th:text="${totalCategories}">0</span>
+                        <span class="stat-label">Categories</span>
+                    </div>
+                </div>
             </a>
-            <a th:href="@{/admin/viewAll}" class="action-btn">
-                <i class="fas fa-eye"></i>
-                View All Content
+
+            <a th:href="@{/GC/managecontacts}" style="text-decoration: none; color: inherit;">
+                <div class="dashboard-card" style="cursor: pointer;">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <h3 class="card-title">Contact Inquiries</h3>
+                    </div>
+                    <div class="card-content">
+                        View messages from potential clients
+                    </div>
+                    <div class="card-stats">
+                        <span class="stat-number" th:text="${totalContacts}">0</span>
+                        <span class="stat-label">New Inquiries</span>
+                    </div>
+                </div>
             </a>
         </div>
 
-        <!-- Recent Activity -->
-        <div class="recent-activity">
-            <div class="card-header">
-                <div class="card-icon">
-                    <i class="fas fa-clock"></i>
-                </div>
-                <h3 class="card-title">Recent Activity</h3>
-            </div>
-            
-            <div class="activity-item">
-                <div class="activity-icon">
-                    <i class="fas fa-user-plus"></i>
-                </div>
-                <div class="activity-content">
-                    <h4 class="activity-title">New user registered</h4>
-                    <p class="activity-time">2 hours ago</p>
-                </div>
-            </div>
-            
-            <div class="activity-item">
-                <div class="activity-icon">
-                    <i class="fas fa-camera"></i>
-                </div>
-                <div class="activity-content">
-                    <h4 class="activity-title">Wedding shoot completed</h4>
-                    <p class="activity-time">4 hours ago</p>
-                </div>
-            </div>
-            
-            <div class="activity-item">
-                <div class="activity-icon">
-                    <i class="fas fa-folder"></i>
-                </div>
-                <div class="activity-content">
-                    <h4 class="activity-title">New category created</h4>
-                    <p class="activity-time">1 day ago</p>
-                </div>
-            </div>
-            
-            <div class="activity-item">
-                <div class="activity-icon">
-                    <i class="fas fa-calendar"></i>
-                </div>
-                <div class="activity-content">
-                    <h4 class="activity-title">Portrait session scheduled</h4>
-                    <p class="activity-time">2 days ago</p>
-                </div>
-            </div>
-        </div>
+       
+
+        
     </div>
 
     <script>
-        // Add some interactive animations
+        // Dashboard cards are now clickable through links
         document.addEventListener('DOMContentLoaded', function() {
-            // Animate stats on load
-            const statNumbers = document.querySelectorAll('.stat-number');
-            statNumbers.forEach(stat => {
-                const target = parseInt(stat.textContent);
-                let current = 0;
-                const increment = target / 50;
-                
-                const timer = setInterval(() => {
-                    current += increment;
-                    if (current >= target) {
-                        stat.textContent = target;
-                        clearInterval(timer);
-                    } else {
-                        stat.textContent = Math.floor(current);
-                    }
-                }, 30);
-            });
+            console.log('Dashboard loaded with real-time stats');
         });
     </script>
 </body>

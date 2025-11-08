@@ -267,6 +267,43 @@
             font-size: 0.9rem;
         }
 
+        .preview-item-container {
+            position: relative;
+            display: inline-block;
+            margin: 5px;
+        }
+
+        .preview-item-remove {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .preview-item-remove:hover {
+            background: #d32f2f;
+            transform: scale(1.1);
+        }
+
+        .file-upload-label.drag-over {
+            background: rgba(192, 169, 122, 0.2);
+            border-color: #c0a97a;
+            transform: scale(1.02);
+        }
+
         /* Responsive Design */
         /* Loading Overlay */
         .loading-overlay {
@@ -388,6 +425,9 @@
     </div>
 
     <script>
+        // Store selected file
+        let selectedFile = null;
+
         // Form validation
         function validateForm() {
             const name = document.getElementById('name').value.trim();
@@ -411,43 +451,88 @@
             }
 
             // Image validation (optional but if provided, must be valid)
-            if (imageInput.files.length > 0) {
-                const file = imageInput.files[0];
+            if (selectedFile) {
                 const maxSize = 500 * 1024 * 1024; // 500MB
                 const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'video/mp4', 'video/avi', 'video/mov', 'video/wmv', 'video/flv', 'video/webm', 'video/mkv'];
 
-                if (file.size > maxSize) {
+                if (selectedFile.size > maxSize) {
                     showError('error-image', 'File size must be less than 500MB');
                     isValid = false;
-                } else if (!allowedTypes.includes(file.type)) {
+                } else if (!allowedTypes.includes(selectedFile.type)) {
                     showError('error-image', 'Please upload a valid image or video file (JPEG, PNG, GIF, MP4, AVI, MOV, etc.)');
                     isValid = false;
                 }
             }
 
+            // Update file input before submission
+            if (selectedFile) {
+                updateFileInput();
+            }
+
             return isValid;
+        }
+
+        // Update file input from stored file
+        function updateFileInput() {
+            const imageInput = document.getElementById('categoryImage');
+            if (selectedFile) {
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(selectedFile);
+                imageInput.files = dataTransfer.files;
+            } else {
+                imageInput.value = '';
+            }
+        }
+
+        // Remove selected file
+        function removeFile() {
+            selectedFile = null;
+            updatePreview();
+            updateFileInput();
+        }
+
+        // Update preview
+        function updatePreview() {
+            const preview = document.getElementById('image-preview');
+            preview.innerHTML = '';
+            
+            if (selectedFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const isVideo = selectedFile.type.startsWith('video/');
+                    preview.innerHTML = `
+                        <div class="preview-item-container">
+                            ${isVideo ? 
+                                `<video src="${e.target.result}" controls style="max-width: 200px; max-height: 200px; border-radius: 10px; border: 2px solid #c0a97a;"></video>` :
+                                `<img src="${e.target.result}" alt="Preview" style="max-width: 200px; max-height: 200px; border-radius: 10px; border: 2px solid #c0a97a;">`
+                            }
+                            <button type="button" class="preview-item-remove" onclick="removeFile()" title="Remove ${selectedFile.name}">×</button>
+                        </div>
+                        <div class="preview-info">
+                            <i class="fas fa-check-circle"></i>
+                            File selected: ${selectedFile.name}
+                        </div>
+                    `;
+                };
+                reader.readAsDataURL(selectedFile);
+            }
+        }
+
+        // Handle file selection
+        function handleFile(file) {
+            selectedFile = file;
+            updatePreview();
+            updateFileInput();
         }
 
         // Image preview function
         function previewImage(input) {
-            const preview = document.getElementById('image-preview');
-            
             if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    preview.innerHTML = `
-                        <img src="${e.target.result}" alt="Preview">
-                        <div class="preview-info">
-                            <i class="fas fa-check-circle"></i>
-                            Image selected: ${input.files[0].name}
-                        </div>
-                    `;
-                };
-                
-                reader.readAsDataURL(input.files[0]);
+                handleFile(input.files[0]);
             } else {
-                preview.innerHTML = '';
+                selectedFile = null;
+                updatePreview();
+                updateFileInput();
             }
         }
 
@@ -484,6 +569,71 @@
                 document.getElementById('loadingOverlay').classList.add('active');
             }
         });
+
+        // Drag and drop functionality
+        function setupDragAndDrop() {
+            const fileUploadLabel = document.querySelector('label[for="categoryImage"]');
+            const fileUploadContainer = document.querySelector('.file-upload-container');
+            const dropZone = fileUploadContainer || fileUploadLabel;
+            
+            if (!dropZone) {
+                console.error('Drop zone not found');
+                return;
+            }
+            
+            console.log('Setting up drop zone on:', dropZone);
+            
+            dropZone.addEventListener('dragenter', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (fileUploadLabel) {
+                    fileUploadLabel.classList.add('drag-over');
+                }
+            }, false);
+            
+            dropZone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.dataTransfer.dropEffect = 'copy';
+                if (fileUploadLabel) {
+                    fileUploadLabel.classList.add('drag-over');
+                }
+            }, false);
+            
+            dropZone.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (!dropZone.contains(e.relatedTarget)) {
+                    if (fileUploadLabel) {
+                        fileUploadLabel.classList.remove('drag-over');
+                    }
+                }
+            }, false);
+            
+            dropZone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Drop event fired');
+                
+                if (fileUploadLabel) {
+                    fileUploadLabel.classList.remove('drag-over');
+                }
+                
+                const files = e.dataTransfer.files;
+                console.log('Files dropped:', files ? files.length : 0);
+                
+                if (files && files.length > 0) {
+                    handleFile(files[0]);
+                }
+            }, false);
+        }
+        
+        // Initialize drag and drop
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setupDragAndDrop);
+        } else {
+            setupDragAndDrop();
+        }
     </script>
     
     <!-- Loading Overlay -->

@@ -4,10 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="public, max-age=3600, must-revalidate">
+    <meta http-equiv="Pragma" content="public">
+    <meta http-equiv="Expires" content="3600">
     <title>Ghoneim Captures - About Us</title>
-    <link rel="icon" type="image/png" href="/images/Icon Black.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/Icon Black.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/Icon Black.png">
+    <link rel="apple-touch-icon" href="/images/Icon Black.png">
+    
+    <!-- DNS Prefetch for external resources -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     
     <!-- CSS Files -->
+    <link rel="preload" href="../css/contact.css" as="style">
+    <link rel="preload" href="../images/Enclosed Horizontal Logo Black.png" as="image">
+    <link rel="preload" href="../images/about.jpg" as="image">
     <link rel="stylesheet" href="../css/contact.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -64,7 +77,8 @@
             align-items: center;
         }
 
-        .nav-links a {
+        .nav-links a,
+        .nav-link {
             color: #000;
             text-decoration: none;
             font-weight: 600;
@@ -75,7 +89,8 @@
             transition: color 0.3s ease;
         }
 
-        .nav-links a:hover {
+        .nav-links a:hover,
+        .nav-link:hover {
             color: #9ca3af;
         }
 
@@ -473,7 +488,7 @@
             
             <nav>
                 <ul class="nav-links">
-                    <li><a th:href="@{/landing/projects}">PROJECTS</a></li>
+                    <a th:href="@{/landing/projects}" class="nav-link">PROJECTS</a>
                     <a th:href="@{/landing/about}" class="nav-link">ABOUT</a>
                     <a th:href="@{/landing/contact}" class="nav-link">CONTACT US</a>
                 </ul>
@@ -523,13 +538,10 @@
     <footer class="footer">
         <div class="footer-content">
             <nav class="footer-links">
-                <a href="#photo-shoots">PHOTO SHOOTS</a>
-                <a href="#galleries">GALLERIES</a>
-                <a href="#about">ABOUT</a>
-                <a href="#resources">RESOURCES</a>
-                <a href="#workshops">WORKSHOPS</a>
-                <a href="#win">WIN</a>
-                <a href="#book">BOOK NOW</a>
+                <a th:href="@{/landing/projects}" class="nav-link">PROJECTS</a>
+                <!-- <a th:href="@{/landing/services}" class="nav-link">SERVICES</a> -->
+                <a th:href="@{/landing/about}" class="nav-link">ABOUT</a>
+                <a th:href="@{/landing/contact}" class="nav-link">CONTACT US</a>
             </nav>
             <p class="footer-text">
                 © 2024 Ghoneim Captures. All rights reserved. | Phone: 1300 288 818
@@ -552,17 +564,6 @@
             });
         });
 
-        // Add scroll effect to header
-        window.addEventListener('scroll', function() {
-            const header = document.querySelector('.header');
-            if (window.scrollY > 100) {
-                header.style.background = 'rgba(248, 249, 250, 0.95)';
-                header.style.backdropFilter = 'blur(10px)';
-            } else {
-                header.style.background = '#f8f9fa';
-                header.style.backdropFilter = 'none';
-            }
-        });
 
         // Animate stats on scroll
         const observerOptions = {

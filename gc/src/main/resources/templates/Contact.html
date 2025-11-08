@@ -4,13 +4,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="public, max-age=3600, must-revalidate">
+    <meta http-equiv="Pragma" content="public">
+    <meta http-equiv="Expires" content="3600">
     <title>Ghoneim Captures - Contact Us</title>
-    <link rel="icon" type="image/png" href="/images/Icon Black.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/Icon Black.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/Icon Black.png">
+    <link rel="apple-touch-icon" href="/images/Icon Black.png">
+    
+    <!-- DNS Prefetch for external resources -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     
     <!-- CSS Files -->
-  <link rel="stylesheet" href="../css/contact.css">
+    <link rel="preload" href="../css/contact.css" as="style">
+    <link rel="preload" href="../images/Enclosed Horizontal Logo Black.png" as="image">
+    <link rel="preload" href="../images/contact.jpg" as="image">
+    <link rel="stylesheet" href="../css/contact.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
         /* Contact Page Specific Styles */
@@ -64,7 +77,8 @@
             align-items: center;
         }
 
-        .nav-links a {
+        .nav-links a,
+        .nav-link {
             color: #000;
             text-decoration: none;
             font-weight: 600;
@@ -75,7 +89,8 @@
             transition: color 0.3s ease;
         }
 
-        .nav-links a:hover {
+        .nav-links a:hover,
+        .nav-link:hover {
             color: #9ca3af;
         }
 
@@ -227,7 +242,8 @@
         }
 
         .form-input::placeholder {
-            color: #999;
+            color: #9ca3af;
+            opacity: 1;
         }
 
         .radio-group {
@@ -556,9 +572,10 @@
             
             <nav>
                 <ul class="nav-links">
-                    <li><a th:href="@{/landing/projects}">PROJECTS</a></li>
-                  <li><a th:href="@{/landing/about}" class="nav-link">ABOUT</a></li>  
-                  <li><a th:href="@{/landing/contact}" class="nav-link">CONTACT US</a></li>
+                    <a th:href="@{/landing/projects}" class="nav-link">PROJECTS</a>
+                    <!-- <a th:href="@{/landing/services}" class="nav-link">SERVICES</a> -->
+                    <a th:href="@{/landing/about}" class="nav-link">ABOUT</a>
+                    <a th:href="@{/landing/contact}" class="nav-link">CONTACT US</a>
                 </ul>
             </nav>
             
@@ -580,85 +597,48 @@
             <h2 class="form-title">Start your Journey</h2>
             <p class="form-subtitle">Not sure if you have what it takes to be in front of the camera? We have more than 5000 5-star reviews from people just like you.</p>
             
-            <form class="contact-form" th:action="@{/landing/contact}" method="post">
+            <!-- Success/Error Messages -->
+            <div th:if="${success}" class="alert alert-success" style="background: #d4edda; color: #155724; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #c3e6cb;">
+                <i class="fas fa-check-circle"></i> <span th:text="${success}"></span>
+            </div>
+            
+            <div th:if="${error}" class="alert alert-error" style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+                <i class="fas fa-exclamation-circle"></i> <span th:text="${error}"></span>
+            </div>
+            
+            <form class="contact-form" th:action="@{/landing/contact}" method="post" th:object="${contact}">
                 <div class="form-row">
                     <div class="form-group">
                         <label for="firstName" class="form-label">First Name*</label>
-                        <input type="text" id="firstName" name="firstName" class="form-input" placeholder="Enter your First Name" required>
+                        <input type="text" id="firstName" th:field="*{firstName}" class="form-input" placeholder="Enter your First Name" required>
                     </div>
                     <div class="form-group">
                         <label for="lastName" class="form-label">Last Name*</label>
-                        <input type="text" id="lastName" name="lastName" class="form-input" placeholder="Enter your Last Name" required>
+                        <input type="text" id="lastName" th:field="*{lastName}" class="form-input" placeholder="Enter your Last Name" required>
           </div>
       </div>
 
                 <div class="form-row">
             <div class="form-group">
                         <label for="email" class="form-label">Email*</label>
-                        <input type="email" id="email" name="email" class="form-input" placeholder="Type your email address ..." required>
+                        <input type="email" id="email" th:field="*{email}" class="form-input" placeholder="Type your email address ..." required>
             </div>
             <div class="form-group">
                         <label for="phone" class="form-label">Phone*</label>
-                        <input type="tel" id="phone" name="phone" class="form-input" placeholder="Phone Number" required>
+                        <input type="tel" id="phone" th:field="*{phone}" class="form-input" placeholder="Phone Number" required>
                     </div>
                 </div>
 
-                <div class="checkbox-group">
-                    <input type="checkbox" id="consent" name="consent" required>
-                    <label for="consent">
-                        I agree to be contacted by GC. By checking this box, you confirm that you have read and understood our 
-                        <a href="#privacy">Privacy Policy</a> and <a href="#terms">Terms & Conditions</a>.
-                    </label>
-                </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">Preferred Studio*</label>
-                        <div class="radio-group">
-                            <div class="radio-item">
-                                <input type="radio" id="brisbane" name="studio" value="brisbane" required>
-                                <label for="brisbane">Brisbane</label>
-                            </div>
-                            <div class="radio-item">
-                                <input type="radio" id="melbourne" name="studio" value="melbourne" required>
-                                <label for="melbourne">Melbourne</label>
-                            </div>
-                            <div class="radio-item">
-                                <input type="radio" id="sydney" name="studio" value="sydney" required>
-                                <label for="sydney">Sydney</label>
-                            </div>
-                            <div class="radio-item">
-                                <input type="radio" id="other" name="studio" value="other" required>
-                                <label for="other">Other</label>
-                            </div>
-                        </div>
-            </div>
-            <div class="form-group">
-                        <label class="form-label">Gender*</label>
-                        <div class="radio-group">
-                            <div class="radio-item">
-                                <input type="radio" id="female" name="gender" value="female" required>
-                                <label for="female">Female</label>
-                            </div>
-                            <div class="radio-item">
-                                <input type="radio" id="male" name="gender" value="male" required>
-                                <label for="male">Male</label>
-                            </div>
-                            <div class="radio-item">
-                                <input type="radio" id="non-binary" name="gender" value="non-binary" required>
-                                <label for="non-binary">Non-binary</label>
-                            </div>
-                            <div class="radio-item">
-                                <input type="radio" id="prefer-not-say" name="gender" value="prefer-not-say" required>
-                                <label for="prefer-not-say">Prefer not to say</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <div class="form-group">
                     <label for="instagram" class="form-label">Instagram Handle (optional)</label>
-                    <input type="text" id="instagram" name="instagram" class="form-input" placeholder="@yourusername">
+                    <input type="text" id="instagram" th:field="*{instagram}" class="form-input" placeholder="@yourusername">
+                </div>
+
+                <div class="form-group">
+                    <label for="inquiryMessage" class="form-label">Inquiry Message (optional)</label>
+                    <textarea id="inquiryMessage" th:field="*{inquiryMessage}" class="form-input" placeholder="Tell us about your photography needs, event details, or any specific requirements..." rows="4" style="resize: vertical; min-height: 100px;"></textarea>
                 </div>
 
                 <button type="submit" class="submit-btn">Submit</button>
@@ -667,7 +647,7 @@
     </section>
 
     <!-- Contact Info Section -->
-    <section class="contact-info-section">
+    <!-- <section class="contact-info-section">
         <div class="contact-info-container">
             <div class="contact-visual">
                 <div class="contact-person-placeholder">
@@ -701,13 +681,14 @@
         </div>
       </div>
     </div>
-    </section>
+    </section> -->
 
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
             <nav class="footer-links">
-                <a href="#photo-shoots">PHOTO SHOOTS</a>
+                <a th:href="@{/landing/projects}" class="nav-link">PROJECTS</a>
+                <!-- <a th:href="@{/landing/services}" class="nav-link">SERVICES</a> -->
                 <a th:href="@{/landing/about}" class="nav-link">ABOUT</a>
                 <a th:href="@{/landing/contact}" class="nav-link">CONTACT US</a>
   
@@ -734,18 +715,6 @@
                 }
             });
 
-            // Check radio buttons
-            const studioRadios = form.querySelectorAll('input[name="studio"]');
-            const genderRadios = form.querySelectorAll('input[name="gender"]');
-            
-            if (!Array.from(studioRadios).some(radio => radio.checked)) {
-                isValid = false;
-            }
-            
-            if (!Array.from(genderRadios).some(radio => radio.checked)) {
-                isValid = false;
-            }
-
             return isValid;
         }
 
@@ -771,17 +740,6 @@
             });
         });
 
-        // Add scroll effect to header
-        window.addEventListener('scroll', function() {
-            const header = document.querySelector('.header');
-            if (window.scrollY > 100) {
-                header.style.background = 'rgba(248, 249, 250, 0.95)';
-                header.style.backdropFilter = 'blur(10px)';
-            } else {
-                header.style.background = '#f8f9fa';
-                header.style.backdropFilter = 'none';
-            }
-        });
     </script>
 </body>
 </html>

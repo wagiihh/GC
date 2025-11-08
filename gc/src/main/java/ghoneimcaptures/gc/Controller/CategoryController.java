@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import ghoneimcaptures.gc.Model.Category;
 import ghoneimcaptures.gc.Model.Image;
@@ -44,8 +45,22 @@ public class CategoryController {
     @Value("${aws.cloudfront.domain}")
     private String cloudFrontDomain;
 
+    // Helper method to check if user is logged in
+    private boolean isLoggedIn(HttpSession session) {
+        return session != null && session.getAttribute("email") != null;
+    }
+
+    // Helper method to redirect if not logged in
+    private RedirectView redirectToLogin() {
+        return new RedirectView("/GC/Login");
+    }
+
     @GetMapping("/managecategories")
-    public ModelAndView manageCategories(HttpSession session) {
+    public Object manageCategories(HttpSession session) {
+        // Check if user is logged in
+        if (!isLoggedIn(session)) {
+            return redirectToLogin();
+        }
         ModelAndView mav = new ModelAndView("managecategories.html");
         try {
             java.util.List<Category> categories = categoryRepository.findAll();
@@ -60,7 +75,12 @@ public class CategoryController {
     }
 
     @GetMapping("/addcategory")
-    public ModelAndView getAddCategory(HttpSession session) {
+    public Object getAddCategory(HttpSession session) {
+        // Check if user is logged in
+        if (!isLoggedIn(session)) {
+            return redirectToLogin();
+        }
+        
         ModelAndView mav = new ModelAndView("addcategory.html");
         Category newCategory = new Category();
         mav.addObject("category", newCategory);

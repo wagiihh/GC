@@ -9,6 +9,205 @@
     <link rel="stylesheet" href="/css/chat.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Preload first few shoot cover images for faster rendering -->
+    <th:block th:if="${category.shoots != null and !category.shoots.empty}">
+        <link th:each="shoot, iterStat : ${category.shoots}" 
+              th:if="${iterStat.index < 6 and shoot.images != null and !shoot.images.empty and shoot.images[0].url != null}"
+              rel="preload" 
+              th:href="${shoot.images[0].url}" 
+              as="image">
+    </th:block>
+    
+    <style>
+        /* Filter Toggle Button */
+        .filter-toggle-container {
+            position: relative;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .filter-toggle-btn {
+            background: #9ca3af;
+            color: #ffffff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(156, 163, 175, 0.3);
+        }
+
+        .filter-toggle-btn:hover {
+            background: #6b7280;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(156, 163, 175, 0.4);
+        }
+
+        .filter-toggle-btn i {
+            font-size: 1.1rem;
+        }
+
+        /* Filter Section Styles */
+        .filter-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(156, 163, 175, 0.2);
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .filter-section.active {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .filter-title {
+            color: #222222;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .filter-title i {
+            color: #9ca3af;
+            font-size: 1.3rem;
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .filter-label {
+            color: #222222;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .filter-select {
+            padding: 12px 18px;
+            background: #ffffff;
+            border: 2px solid rgba(156, 163, 175, 0.3);
+            border-radius: 10px;
+            color: #222222;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+            min-width: 200px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #9ca3af;
+            box-shadow: 0 0 0 3px rgba(156, 163, 175, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .filter-select:hover {
+            border-color: #9ca3af;
+        }
+
+        .filter-select option {
+            background: #ffffff;
+            color: #222222;
+            padding: 10px;
+        }
+
+        .filter-btn {
+            background: #9ca3af;
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(156, 163, 175, 0.3);
+        }
+
+        .filter-btn:hover {
+            background: #6b7280;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(156, 163, 175, 0.4);
+        }
+
+        .filter-btn.clear {
+            background: rgba(156, 163, 175, 0.2);
+            color: #222222;
+            box-shadow: 0 4px 15px rgba(156, 163, 175, 0.2);
+        }
+
+        .filter-btn.clear:hover {
+            background: rgba(156, 163, 175, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(156, 163, 175, 0.3);
+        }
+
+        /* Hidden class for filtered items */
+        .shoot-item.hidden {
+            display: none;
+        }
+
+        /* Responsive filters */
+        @media (max-width: 768px) {
+            .filter-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group {
+                width: 100%;
+            }
+
+            .filter-select {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Header -->
@@ -45,15 +244,51 @@
         <!-- Shoots Grid Section -->
         <section class="shoots-section">
             <div class="container">
+                <!-- Filter Toggle Button -->
+                <div class="filter-toggle-container">
+                    <button class="filter-toggle-btn" onclick="toggleFilterSection()">
+                        <i class="fas fa-filter"></i>
+                        Filter
+                    </button>
+                </div>
+
+                <!-- Filter Section -->
+                <div class="filter-section" id="filterSection">
+                    <h3 class="filter-title">
+                        <i class="fas fa-filter"></i>
+                        Filter Shoots
+                    </h3>
+                    <div class="filter-controls">
+                        <div class="filter-group">
+                            <label class="filter-label" for="dateFilter">Date</label>
+                            <select id="dateFilter" class="filter-select">
+                                <option value="all">All Dates</option>
+                                <option value="today">Today</option>
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                                <option value="year">This Year</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <button class="filter-btn clear" onclick="clearFilters()">
+                                <i class="fas fa-times"></i>
+                                Clear Filters
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Shoots Grid -->
                 <div th:if="${category.shoots != null and !category.shoots.empty}" class="shoots-grid">
-                    <div th:each="shoot : ${category.shoots}" class="shoot-item" th:data-shoot-id="${shoot.id}" onclick="viewShoot(this.dataset.shootId, this.dataset.shootName)">
+                    <div th:each="shoot, iterStat : ${category.shoots}" class="shoot-item" th:data-shoot-id="${shoot.id}" th:data-shoot-date="${shoot.date}" onclick="viewShoot(this.dataset.shootId, this.dataset.shootName)">
                         <div class="shoot-preview">
                             <!-- Cover photo (first image) -->
                             <img th:if="${shoot.images != null and !shoot.images.empty}" 
                                  th:src="${shoot.images[0].url}" 
                                  th:alt="${shoot.name}" 
-                                 class="cover-image" />
+                                 class="cover-image"
+                                 th:loading="${iterStat.index < 6 ? 'eager' : 'lazy'}"
+                                 decoding="async" />
                             <!-- Fallback if no images -->
                             <div th:if="${shoot.images == null or shoot.images.empty}" class="no-cover">
                                 <i class="fas fa-camera"></i>
@@ -152,6 +387,175 @@
     </div>
 
     <script>
+        // Cache management for category shoots
+        const CACHE_VERSION = '1.0';
+        const CACHE_EXPIRY = 24 * 60 * 60 * 1000; // 24 hours
+
+        function getCategoryCacheKey(categoryId) {
+            return `category_${categoryId}_v${CACHE_VERSION}`;
+        }
+
+        function cacheCategoryData(categoryId, categoryData) {
+            try {
+                const cacheData = {
+                    data: categoryData,
+                    timestamp: Date.now(),
+                    expiry: Date.now() + CACHE_EXPIRY
+                };
+                localStorage.setItem(getCategoryCacheKey(categoryId), JSON.stringify(cacheData));
+                console.log('Category data cached for category ID:', categoryId);
+            } catch (error) {
+                console.error('Error caching category data:', error);
+            }
+        }
+
+        function getCachedCategoryData(categoryId) {
+            try {
+                const cacheKey = getCategoryCacheKey(categoryId);
+                const cached = localStorage.getItem(cacheKey);
+                if (!cached) return null;
+
+                const cacheData = JSON.parse(cached);
+                
+                if (Date.now() > cacheData.expiry) {
+                    localStorage.removeItem(cacheKey);
+                    return null;
+                }
+
+                console.log('Using cached data for category ID:', categoryId);
+                return cacheData.data;
+            } catch (error) {
+                console.error('Error reading cached category data:', error);
+                return null;
+            }
+        }
+
+        // Preload shoot cover images
+        function preloadShootImages(shoots) {
+            if (!shoots || shoots.length === 0) return;
+            
+            shoots.forEach(shoot => {
+                if (shoot.images && shoot.images.length > 0 && shoot.images[0].url) {
+                    const img = new Image();
+                    img.src = shoot.images[0].url;
+                }
+            });
+        }
+
+        // Extract and cache category data
+        function extractAndCacheCategoryData() {
+            try {
+                const categoryId = /*[[${category.id}]]*/ null;
+                if (!categoryId) return;
+
+                const shoots = /*[[${category.shoots}]]*/ [];
+                const categoryData = {
+                    id: categoryId,
+                    name: /*[[${category.name}]]*/ '',
+                    shoots: shoots ? shoots.map(shoot => ({
+                        id: shoot.id,
+                        name: shoot.name,
+                        date: shoot.date,
+                        location: shoot.location,
+                        imageCount: shoot.images ? shoot.images.length : 0,
+                        videoCount: shoot.videos ? shoot.videos.length : 0,
+                        coverImage: shoot.images && shoot.images.length > 0 ? shoot.images[0].url : null
+                    })) : []
+                };
+
+                cacheCategoryData(categoryId, categoryData);
+                
+                // Preload cover images in background
+                preloadShootImages(categoryData.shoots);
+            } catch (error) {
+                console.error('Error extracting category data:', error);
+            }
+        }
+
+        // Toggle filter section visibility
+        function toggleFilterSection() {
+            const filterSection = document.getElementById('filterSection');
+            filterSection.classList.toggle('active');
+        }
+
+        // Setup filter functionality on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Extract and cache category data
+            extractAndCacheCategoryData();
+            
+            // Setup filters
+            setupFilters();
+        });
+
+        // Setup filter functionality
+        function setupFilters() {
+            const dateFilter = document.getElementById('dateFilter');
+
+            // Add event listener for filtering
+            dateFilter.addEventListener('change', applyFilters);
+        }
+
+        // Function to apply filters
+        function applyFilters() {
+            const dateFilter = document.getElementById('dateFilter').value;
+            
+            const allShootItems = document.querySelectorAll('.shoot-item');
+            
+            allShootItems.forEach(item => {
+                let shouldShow = true;
+                
+                // Filter by date
+                if (dateFilter !== 'all') {
+                    const shootDate = item.dataset.shootDate;
+                    if (shootDate) {
+                        const shootDateObj = new Date(shootDate);
+                        const now = new Date();
+                        
+                        let shouldInclude = false;
+                        
+                        switch (dateFilter) {
+                            case 'today':
+                                shouldInclude = shootDateObj.toDateString() === now.toDateString();
+                                break;
+                            case 'week':
+                                const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                                shouldInclude = shootDateObj >= weekAgo;
+                                break;
+                            case 'month':
+                                const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                                shouldInclude = shootDateObj >= monthAgo;
+                                break;
+                            case 'year':
+                                const yearAgo = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+                                shouldInclude = shootDateObj >= yearAgo;
+                                break;
+                        }
+                        
+                        if (!shouldInclude) {
+                            shouldShow = false;
+                        }
+                    }
+                }
+                
+                // Apply filter
+                if (shouldShow) {
+                    item.classList.remove('hidden');
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+        }
+
+        // Function to clear all filters
+        function clearFilters() {
+            document.getElementById('dateFilter').value = 'all';
+            
+            const allShootItems = document.querySelectorAll('.shoot-item');
+            allShootItems.forEach(item => {
+                item.classList.remove('hidden');
+            });
+        }
+
         // Function to view a shoot
         function viewShoot(shootId, shootName) {
             // Redirect to the shoot details page
@@ -196,16 +600,137 @@
         }
 
         // Function to download current file
-        function downloadCurrentFile() {
+        async function downloadCurrentFile() {
             const previewImage = document.getElementById('previewImage');
             const previewVideo = document.getElementById('previewVideo');
             const url = previewImage.style.display !== 'none' ? previewImage.src : previewVideo.src;
             const filename = document.getElementById('info-filename').textContent;
+            const isImage = previewImage.style.display !== 'none';
             
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = filename;
-            link.click();
+            await downloadFileToDevice(url, filename, isImage);
+        }
+
+        // Function to download file to device
+        async function downloadFileToDevice(url, filename, isImage = true) {
+            try {
+                if (isImage) {
+                    console.log('Starting image download:', filename);
+                    
+                    const infoFilename = document.getElementById('info-filename');
+                    const originalText = infoFilename ? infoFilename.textContent : null;
+                    if (infoFilename) {
+                        infoFilename.textContent = 'Downloading...';
+                    }
+                    
+                    try {
+                        const response = await fetch(url, {
+                            method: 'GET',
+                            mode: 'cors',
+                            credentials: 'omit',
+                            cache: 'no-cache'
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        
+                        const blob = await response.blob();
+                        const blobUrl = window.URL.createObjectURL(blob);
+                        
+                        const link = document.createElement('a');
+                        link.href = blobUrl;
+                        link.download = filename;
+                        link.style.display = 'none';
+                        document.body.appendChild(link);
+                        link.click();
+                        
+                        setTimeout(() => {
+                            document.body.removeChild(link);
+                            window.URL.revokeObjectURL(blobUrl);
+                        }, 100);
+                        
+                        console.log('Image download initiated:', filename);
+                        
+                        if (infoFilename && originalText) {
+                            setTimeout(() => {
+                                infoFilename.textContent = originalText;
+                            }, 500);
+                        }
+                    } catch (fetchError) {
+                        console.error('Fetch failed, trying canvas method:', fetchError);
+                        
+                        const img = new Image();
+                        img.crossOrigin = 'anonymous';
+                        
+                        img.onload = function() {
+                            try {
+                                const canvas = document.createElement('canvas');
+                                canvas.width = img.naturalWidth;
+                                canvas.height = img.naturalHeight;
+                                const ctx = canvas.getContext('2d');
+                                ctx.drawImage(img, 0, 0);
+                                
+                                canvas.toBlob(function(blob) {
+                                    if (blob) {
+                                        const blobUrl = window.URL.createObjectURL(blob);
+                                        const link = document.createElement('a');
+                                        link.href = blobUrl;
+                                        link.download = filename;
+                                        link.click();
+                                        window.URL.revokeObjectURL(blobUrl);
+                                        
+                                        if (infoFilename && originalText) {
+                                            infoFilename.textContent = originalText;
+                                        }
+                                        console.log('Image downloaded via canvas method:', filename);
+                                    }
+                                }, 'image/jpeg', 0.95);
+                            } catch (canvasError) {
+                                console.error('Canvas method failed:', canvasError);
+                                if (infoFilename && originalText) {
+                                    infoFilename.textContent = originalText;
+                                }
+                                alert('Direct download not available. Opening image in new tab...');
+                                window.open(url, '_blank');
+                            }
+                        };
+                        
+                        img.onerror = function() {
+                            console.error('Image load failed for CORS');
+                            if (infoFilename && originalText) {
+                                infoFilename.textContent = originalText;
+                            }
+                            alert('Direct download not available. Opening image in new tab...');
+                            window.open(url, '_blank');
+                        };
+                        
+                        img.src = url;
+                    }
+                } else {
+                    console.log('Starting video download:', filename);
+                    try {
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = filename;
+                        link.style.display = 'none';
+                        document.body.appendChild(link);
+                        link.click();
+                        
+                        setTimeout(() => {
+                            document.body.removeChild(link);
+                        }, 100);
+                        
+                        console.log('Video download initiated:', filename);
+                    } catch (error) {
+                        console.error('Video download failed, opening in new tab:', error);
+                        window.open(url, '_blank');
+                    }
+                }
+            } catch (error) {
+                console.error('Download error:', error);
+                alert('Download failed. Opening in new tab...');
+                window.open(url, '_blank');
+            }
         }
 
         // Close modal when clicking outside

@@ -130,17 +130,20 @@
 
         .form-icon {
             position: absolute;
-            left: 20px;
+            right: 20px;
             top: 50%;
             transform: translateY(-50%);
             color: #C0A97A;
             font-size: 1.1rem;
-            z-index: 2;
+            z-index: 3;
+            pointer-events: none;
+            width: 20px;
+            text-align: center;
         }
 
         .form-input {
             width: 100%;
-            padding: 18px 20px 18px 55px;
+            padding: 18px 50px 18px 20px;
             background: rgba(0, 0, 0, 0.3);
             border: 2px solid rgba(158, 158, 158, 0.3);
             border-radius: 15px;
@@ -150,6 +153,8 @@
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
             box-sizing: border-box;
+            position: relative;
+            z-index: 1;
         }
 
         .form-input::placeholder {
@@ -321,7 +326,7 @@
             }
 
             .form-input {
-                padding: 15px 15px 15px 50px;
+                padding: 15px 50px 15px 15px;
                 font-size: 0.95rem;
             }
 

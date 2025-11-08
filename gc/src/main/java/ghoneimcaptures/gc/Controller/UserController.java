@@ -15,9 +15,14 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import ghoneimcaptures.gc.Model.User;
+import ghoneimcaptures.gc.Model.Contact;
 import ghoneimcaptures.gc.Repositories.UserRepository;
+import ghoneimcaptures.gc.Repositories.CategoryRepository;
+import ghoneimcaptures.gc.Repositories.ShootRepository;
+import ghoneimcaptures.gc.Repositories.ContactRepository;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import java.util.List;
 
 
 @Controller
@@ -25,7 +30,25 @@ import jakarta.validation.Valid;
 public class UserController {
     @Autowired
     private UserRepository userRepository;
+    
+    @Autowired
+    private CategoryRepository categoryRepository;
+    
+    @Autowired
+    private ShootRepository shootRepository;
+    
+    @Autowired
+    private ContactRepository contactRepository;
 
+    // Helper method to check if user is logged in
+    private boolean isLoggedIn(HttpSession session) {
+        return session.getAttribute("email") != null;
+    }
+
+    // Helper method to redirect if not logged in
+    private RedirectView redirectToLogin() {
+        return new RedirectView("/GC/Login");
+    }
 
      @GetMapping("/Login")
     public ModelAndView Login() {
@@ -72,10 +95,39 @@ public class UserController {
 
     
     @GetMapping("/HomePage")
-    public ModelAndView getHomePage(HttpSession session) {
+    public Object getHomePage(HttpSession session) {
+        // Check if user is logged in
+        if (!isLoggedIn(session)) {
+            return redirectToLogin();
+        }
+        
         ModelAndView mav = new ModelAndView("HomePage.html");
         mav.addObject("email", (String) session.getAttribute("email"));
         mav.addObject("Firstname", (String) session.getAttribute("Firstname"));
+        
+        // Fetch real stats from database
+        try {
+            long totalUsers = userRepository.count();
+            long totalCategories = categoryRepository.count();
+            long totalShoots = shootRepository.count();
+            long totalContacts = contactRepository.count();
+            
+            mav.addObject("totalUsers", totalUsers);
+            mav.addObject("totalCategories", totalCategories);
+            mav.addObject("totalShoots", totalShoots);
+            mav.addObject("totalContacts", totalContacts);
+            
+            System.out.println("Dashboard stats - Users: " + totalUsers + ", Categories: " + totalCategories + ", Shoots: " + totalShoots + ", Contacts: " + totalContacts);
+        } catch (Exception e) {
+            System.err.println("Error fetching dashboard stats: " + e.getMessage());
+            e.printStackTrace();
+            // Set default values if there's an error
+            mav.addObject("totalUsers", 0);
+            mav.addObject("totalCategories", 0);
+            mav.addObject("totalShoots", 0);
+            mav.addObject("totalContacts", 0);
+        }
+        
         return mav;
     }
 
@@ -97,7 +149,12 @@ public class UserController {
     }
 
     @GetMapping("/manageusers")
-    public ModelAndView manageUsers(HttpSession session) {
+    public Object manageUsers(HttpSession session) {
+        // Check if user is logged in
+        if (!isLoggedIn(session)) {
+            return redirectToLogin();
+        }
+        
         ModelAndView mav = new ModelAndView("manageusers.html");
         try {
             java.util.List<User> users = userRepository.findAll();
@@ -112,7 +169,12 @@ public class UserController {
     }
 
     @GetMapping("/edituser/{id}")
-    public ModelAndView editUser(@PathVariable Long id, HttpSession session) {
+    public Object editUser(@PathVariable Long id, HttpSession session) {
+        // Check if user is logged in
+        if (!isLoggedIn(session)) {
+            return redirectToLogin();
+        }
+        
         ModelAndView mav = new ModelAndView("edituser.html");
         try {
             User user = userRepository.findById(id).orElse(null);
@@ -200,7 +262,12 @@ public class UserController {
     }
 
     @GetMapping("/addusers")
-    public ModelAndView getaddusers(HttpSession session) {
+    public Object getaddusers(HttpSession session) {
+        // Check if user is logged in
+        if (!isLoggedIn(session)) {
+            return redirectToLogin();
+        }
+        
         ModelAndView mav = new ModelAndView("addusers.html");
         User newUser=new User();
         mav.addObject("newUser",newUser);
@@ -305,9 +372,125 @@ public class UserController {
                 return signupModel;
             }
         }
-    }
                                           
 
     }
     
+    // Contact Management Endpoints
+    @GetMapping("/managecontacts")
+    public Object manageContacts(
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String dateFilter,
+            @RequestParam(required = false, defaultValue = "date_desc") String sortBy,
+            HttpSession session) {
+        // Check if user is logged in
+        if (!isLoggedIn(session)) {
+            return redirectToLogin();
+        }
+        
+        ModelAndView mav = new ModelAndView("managecontacts.html");
+        try {
+            List<Contact> contacts = contactRepository.findAll();
+            
+            // Apply status filter
+            if (status != null && !status.isEmpty()) {
+                contacts = contacts.stream()
+                    .filter(c -> c.getStatus() != null && c.getStatus().equals(status))
+                    .collect(java.util.stream.Collectors.toList());
+            }
+            
+            // Apply date filter
+            if (dateFilter != null && !dateFilter.isEmpty()) {
+                java.time.LocalDate now = java.time.LocalDate.now();
+                contacts = contacts.stream()
+                    .filter(c -> {
+                        if (c.getSubmittedAt() == null) return false;
+                        java.time.LocalDate submittedDate = c.getSubmittedAt().toLocalDate();
+                        
+                        switch (dateFilter) {
+                            case "today":
+                                return submittedDate.equals(now);
+                            case "week":
+                                return submittedDate.isAfter(now.minusWeeks(1));
+                            case "month":
+                                return submittedDate.isAfter(now.minusMonths(1));
+                            default:
+                                return true;
+                        }
+                    })
+                    .collect(java.util.stream.Collectors.toList());
+            }
+            
+            // Apply sorting
+            switch (sortBy) {
+                case "date_asc":
+                    contacts.sort((a, b) -> {
+                        if (a.getSubmittedAt() == null || b.getSubmittedAt() == null) return 0;
+                        return a.getSubmittedAt().compareTo(b.getSubmittedAt());
+                    });
+                    break;
+                case "name_asc":
+                    contacts.sort((a, b) -> {
+                        String nameA = (a.getFirstName() + " " + a.getLastName()).toLowerCase();
+                        String nameB = (b.getFirstName() + " " + b.getLastName()).toLowerCase();
+                        return nameA.compareTo(nameB);
+                    });
+                    break;
+                case "name_desc":
+                    contacts.sort((a, b) -> {
+                        String nameA = (a.getFirstName() + " " + a.getLastName()).toLowerCase();
+                        String nameB = (b.getFirstName() + " " + b.getLastName()).toLowerCase();
+                        return nameB.compareTo(nameA);
+                    });
+                    break;
+                case "date_desc":
+                default:
+                    contacts.sort((a, b) -> {
+                        if (a.getSubmittedAt() == null || b.getSubmittedAt() == null) return 0;
+                        return b.getSubmittedAt().compareTo(a.getSubmittedAt());
+                    });
+                    break;
+            }
+            
+            mav.addObject("contacts", contacts);
+            mav.addObject("status", status);
+            mav.addObject("dateFilter", dateFilter);
+            mav.addObject("sortBy", sortBy);
+            System.out.println("Found " + contacts.size() + " contact inquiries");
+        } catch (Exception e) {
+            System.err.println("Error fetching contacts: " + e.getMessage());
+            e.printStackTrace();
+            mav.addObject("contacts", new java.util.ArrayList<>());
+        }
+        return mav;
+    }
+    
+    @GetMapping("/contact/mark-contacted/{id}")
+    public RedirectView markContactAsContacted(@PathVariable Long id) {
+        try {
+            Contact contact = contactRepository.findById(id).orElse(null);
+            if (contact != null) {
+                contact.setStatus("CONTACTED");
+                contactRepository.save(contact);
+                System.out.println("Contact " + id + " marked as contacted");
+            }
+        } catch (Exception e) {
+            System.err.println("Error marking contact as contacted: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return new RedirectView("/GC/managecontacts");
+    }
+    
+    @GetMapping("/contact/delete/{id}")
+    public RedirectView deleteContact(@PathVariable Long id) {
+        try {
+            contactRepository.deleteById(id);
+            System.out.println("Contact " + id + " deleted");
+        } catch (Exception e) {
+            System.err.println("Error deleting contact: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return new RedirectView("/GC/managecontacts");
+    }
+}
 

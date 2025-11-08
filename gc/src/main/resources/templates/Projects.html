@@ -3,8 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="public, max-age=1800, must-revalidate">
+    <meta http-equiv="Pragma" content="public">
+    <meta http-equiv="Expires" content="1800">
     <title>Projects - Ghoneim Captures</title>
-    <link rel="icon" type="image/png" href="/images/Icon Black.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/Icon Black.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/Icon Black.png">
+    <link rel="apple-touch-icon" href="/images/Icon Black.png">
+    <!-- DNS Prefetch for external resources -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/css/Projects.css" as="style">
+    <link rel="preload" href="/css/chat.css" as="style">
+    <link rel="preload" href="/js/Projects.js" as="script">
+    <link rel="preload" href="/js/chat.js" as="script">
+    <link rel="preload" href="/js/navigation.js" as="script">
+    <link rel="preload" href="/images/Enclosed Horizontal Logo Black.png" as="image">
+    
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="/css/Projects.css">
     <link rel="stylesheet" href="/css/chat.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -20,7 +39,7 @@
             
             <nav>
                 <ul class="nav-links">
-                    <li><a href="#photo-shoots">PHOTO SHOOTS</a></li>
+                    <a th:href="@{/landing/projects}" class="nav-link">PROJECTS</a>
                     <a th:href="@{/landing/about}" class="nav-link">ABOUT</a>
                     <a th:href="@{/landing/contact}" class="nav-link">CONTACT US</a>
                 </ul>
@@ -68,7 +87,9 @@
                         
                         <!-- Text Section -->
                         <div class="text-section">
-                            <h1 class="main-title" th:text="${category.name} + ': Featured Collection'">Category Name</h1>
+                            <a th:href="@{/landing/projects/{id}(id=${category.id})}" style="text-decoration: none; color: inherit; cursor: pointer; display: inline-block;">
+                                <h1 class="main-title" th:text="${category.name} + ': Featured Collection'">Category Name</h1>
+                            </a>
                             <div class="tag" th:text="${category.name}">Category Tag</div>
                             <a th:href="@{/landing/projects/{id}(id=${category.id})}" class="shop-now">
                                 <span class="arrow">→</span>
